@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>插畫作品集 — Illustration Folio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Shippori+Mincho+B1:wght@400;600;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================
+   ROOT — 和紙奢華色盤
+   ============================ */
+:root {
+  --ink:       #1c1710;
+  --ink-muted: #5a5245;
+  --parchment: #f4f0e6;
+  --surface:   #ede8db;
+  --line:      rgba(28,23,16,0.12);
+  --crimson:   #b8292f;
+  --crimson-dim: rgba(184,41,47,0.08);
+  --gold:      #c4973a;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  background: var(--parchment);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* ============================
+   游標 — 水墨滴落
+   ============================ */
+#cur-dot {
+  position: fixed; pointer-events: none; z-index: 9999;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--crimson);
+  transform: translate(-50%, -50%);
+  transition: transform .05s linear;
+}
+#cur-ring {
+  position: fixed; pointer-events: none; z-index: 9998;
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--ink);
+  transform: translate(-50%, -50%);
+  opacity: 0.4;
+  transition: width .4s var(--ease-out-expo), height .4s var(--ease-out-expo), opacity .4s, border-color .3s, border-width .3s;
+}
+#cur-ring.on-hover { width: 60px; height: 60px; border-color: var(--crimson); border-width: 1.5px; opacity: 0.7; }
+a, button, [data-hover] { cursor: none; }
+
+/* ============================
+   Typography
+   ============================ */
+.serif-jp { font-family: 'Shippori Mincho B1', serif; }
+.mono     { font-family: 'DM Mono', monospace; }
+
+/* ============================
+   HERO 區塊佈局
+   ============================ */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-side-text {
+  position: absolute;
+  left: 4.5rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.hero-header {
+  grid-column: 1 / -1;
+  padding: 3.5rem 6rem 2.5rem 8rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.hero-title span { font-style: italic; color: var(--crimson); }
+
+.hero-nav-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+
+/* --- Hero 媒體區塊佈局 --- */
+.hero-media-left { 
+  grid-column: 1; 
+  border-right: 1px solid var(--line); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem; 
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-media-right { 
+  grid-column: 2; 
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 讓右側圖片往左靠 */
+  padding: 3rem 4rem; /* 增加內邊距 */
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-media-left video {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transition: transform 0.8s var(--ease-out-expo);
+}
+
+.hero-media-right img {
+  max-width: 55%; /* 關鍵：縮小圖片寬度，強制讓出右側空間給文字 */
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transition: transform 0.8s var(--ease-out-expo);
+}
+
+.hero-media-left:hover video,
+.hero-media-right:hover img {
+  transform: translateY(-5px);
+}
+
+.hero-deco-num {
+  position: absolute;
+  bottom: 1rem; right: 2rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 6rem;
+  font-weight: 600;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(28,23,16,0.12);
+  pointer-events: none;
+  user-select: none;
+}
+/* ============================
+   影片音量切換按鈕
+   ============================ */
+.mute-btn {
+  position: absolute;
+  bottom: 5.5rem; /* 放在左下角與右側的 01 達成平衡 */
+  right: 2.5rem; 
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(244, 240, 230, 0.6); /* 呼應 parchment 底色，帶點半透明 */
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 20;
+  cursor: none; /* 隱藏原生游標，使用我們的水墨游標 */
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.mute-btn:hover {
+  background: var(--ink);
+  color: var(--parchment);
+  transform: scale(1.1);
+  border-color: var(--ink);
+}
+
+.mute-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: opacity 0.3s ease;
+}
+
+/* --- 首頁獨立 Meta 文字定位 --- */
+.hero .hero-meta {
+  position: absolute; /* 覆蓋原本的 sticky */
+  top: 50%;
+  transform: translateY(-50%); /* 完美垂直置中對齊圖片 */
+  right: 4rem; /* 靠右放置 */
+  left: auto;
+  bottom: auto;
+  width: 35%; /* 給予固定寬度避免折行擁擠 */
+  z-index: 10;
+  margin: 0;
+  pointer-events: none; /* 防止干擾圖片 hover */
+}
+
+/* ============================
+   浮動進度條 (Floating Progress Bar)
+   ============================ */
+.progress-bar {
+  position: fixed;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 900;
+}
+
+.progress-item {
+  width: 24px;
+  height: 36px;
+  border: 1px solid var(--line);
+  opacity: 0.3;
+  transition: all 0.3s var(--ease-out-expo);
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--surface);
+}
+
+.progress-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.progress-item:hover, 
+.progress-item.active {
+  opacity: 1;
+  transform: scale(1.2) translateX(4px);
+  border-color: var(--crimson);
+}
+
+/* R-18 縮圖模糊防護 */
+.progress-item.nsfw-thumb img {
+  filter: blur(8px) brightness(0.7) saturate(0.5);
+  transition: filter 0.8s var(--ease-out-expo);
+}
+.progress-item.nsfw-thumb.revealed img { filter: none; }
+
+/* ============================
+   GALLERY 畫廊區塊
+   ============================ */
+.gallery-section { padding: 8rem 0 12rem; }
+
+.gallery-header {
+  padding: 0 6rem 5rem 8rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6rem;
+}
+
+.gallery-heading {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.gallery-heading em {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.6em;
+  color: var(--crimson);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.3em;
+}
+
+.gallery-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.15em;
+}
+
+.gallery-items { display: flex; flex-direction: column; gap: 0; }
+
+.artwork-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 280px;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  padding: 4rem 6rem 4rem 6rem;
+  gap: 3rem;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+}
+
+.artwork-row.visible { opacity: 1; transform: translateY(0); }
+
+.artwork-index {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.1em;
+  padding-top: 0.2rem;
+}
+
+.artwork-img-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
+}
+
+.artwork-img-wrap:hover {
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+}
+
+.artwork-img-wrap img {
+  width: 100%;
+  height: auto;
+  max-height: 85vh;
+  object-fit: contain;
+  display: block;
+}
+
+.nsfw-wrap .artwork-img-wrap img {
+  filter: blur(24px) brightness(0.7) saturate(0.5);
+  transition: filter 0.8s var(--ease-out-expo);
+}
+.nsfw-wrap.revealed .artwork-img-wrap img { filter: none; }
+
+.nsfw-badge {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+.nsfw-badge .badge-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.4em;
+  color: var(--crimson);
+  border: 1px solid var(--crimson);
+  padding: 0.4em 1.4em;
+  background: rgba(244,240,230,0.85);
+  backdrop-filter: blur(4px);
+}
+.nsfw-badge .badge-hint {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-muted);
+}
+.nsfw-wrap.revealed .nsfw-badge { opacity: 0; }
+
+.artwork-meta {
+  padding-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 2rem;
+}
+
+.artwork-title {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.artwork-sub { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em; color: var(--ink-muted); text-transform: uppercase; }
+.artwork-divider { width: 30px; height: 1px; background: var(--crimson); }
+.artwork-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  border: 1px solid var(--crimson);
+  padding: 0.25em 0.7em;
+  border-radius: 1px;
+}
+
+/* ============================
+   FAB & Modal & Footer
+   ============================ */
+.fab { position: fixed; bottom: 3rem; right: 3rem; z-index: 800; }
+.fab-btn {
+  background: var(--ink); color: var(--parchment); border: none; font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1em 2em;
+  border-radius: 1px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s var(--ease-spring);
+}
+.fab-btn:hover { background: var(--crimson); box-shadow: 0 8px 30px rgba(184,41,47,0.35); }
+.fab-btn.active { background: var(--crimson); }
+
+#age-modal {
+  position: fixed; inset: 0; z-index: 9900; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease-out-expo);
+}
+#age-modal.open { opacity: 1; pointer-events: all; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(28,23,16,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.modal-card {
+  position: relative; background: var(--parchment); width: min(480px, 90vw); padding: 0; border: 1px solid var(--line);
+  transform: translateY(24px) scale(0.97); transition: transform 0.5s var(--ease-spring), opacity 0.4s; opacity: 0; overflow: hidden;
+}
+#age-modal.open .modal-card { transform: translateY(0) scale(1); opacity: 1; }
+.modal-stripe { height: 3px; background: var(--crimson); }
+.modal-card::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--crimson) 0%, transparent 60%); opacity: 0.4; }
+.modal-body { padding: 3rem 3rem 2rem; }
+.modal-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--crimson); text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
+.modal-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.modal-title { font-family: 'Shippori Mincho B1', serif; font-size: 1.6rem; font-weight: 600; line-height: 1.4; color: var(--ink); margin-bottom: 1.2rem; }
+.modal-desc { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; color: var(--ink-muted); line-height: 1.8; margin-bottom: 0.8rem; }
+.modal-subdesc { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-muted); opacity: 0.7; line-height: 1.7; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line); }
+.modal-actions { display: flex; gap: 1rem; align-items: center; }
+.btn-confirm { flex: 1; background: var(--ink); color: var(--parchment); border: none; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1em 1.5em; border-radius: 1px; transition: background 0.2s, transform 0.15s var(--ease-spring); cursor: none; }
+.btn-confirm:hover { background: var(--crimson); transform: scale(1.02); }
+.btn-confirm:active { transform: scale(0.98); }
+.btn-cancel { flex: 1; background: transparent; color: var(--ink-muted); border: 1px solid var(--line); font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1em 1.5em; border-radius: 1px; transition: border-color 0.2s, color 0.2s, transform 0.15s var(--ease-spring); cursor: none; }
+.btn-cancel:hover { border-color: var(--ink); color: var(--ink); transform: scale(1.02); }
+.btn-cancel:active { transform: scale(0.98); }
+.modal-footer { padding: 1rem 3rem; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+.modal-footer-text { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.15em; color: var(--ink-muted); opacity: 0.6; }
+.modal-corner { position: absolute; bottom: 1.2rem; right: 1.5rem; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.7rem; color: var(--ink-muted); opacity: 0.3; }
+
+.site-footer { border-top: 1px solid var(--line); padding: 4rem 6rem; display: flex; align-items: center; justify-content: space-between; }
+.footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink-muted); }
+.footer-copy { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: var(--ink-muted); opacity: 0.6; }
+
+/* ============================
+   響應式設計 (Mobile)
+   ============================ */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-media-left { grid-column: 1; border-right: none; border-bottom: 1px solid var(--line); min-height: 60vw; }
+  .hero-media-right { display: none; } /* 手機版不顯示右側 */
+  .hero-header { padding: 2.5rem 2rem; }
+  .hero-title { font-size: 1.8rem; }
+  .gallery-header { padding: 0 2rem 3rem; }
+  .artwork-row { grid-template-columns: 40px 1fr; padding: 3rem 2rem 3rem 1rem; gap: 1.5rem; }
+  .artwork-meta { display: none; }
+  .site-footer { flex-direction: column; gap: 1rem; padding: 3rem 2rem; text-align: center; }
+  .progress-bar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- 游標 -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- 浮動進度條容器 (JS 動態生成內容) -->
+<nav class="progress-bar" id="progress-bar"></nav>
+
+<!-- ============================
+     HERO
+     ============================ -->
+<header class="hero">
+  <div class="hero-side-text">Illustration Portfolio — Original & Fan Art</div>
+
+  <div class="hero-header">
+    <h1 class="hero-title">
+      Illustration <span>Folio</span>
+    </h1>
+    <span class="hero-nav-label">Portfolio · 2024–2025</span>
+  </div>
+
+  <div class="hero-media-left" data-hover>
+    <!-- 加上 id 以便 JS 選取 -->
+    <video id="hero-video" autoplay loop muted playsinline>
+      <source src="image/名偵探光之美少女-森亜るるか1920x1080.mp4" type="video/mp4">
+    </video>
+    
+    <!-- 新增：聲音切換按鈕 -->
+    <button id="mute-toggle-btn" class="mute-btn" aria-label="Toggle Audio">
+      <!-- 靜音圖示 (預設顯示) -->
+      <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+      <!-- 播放聲音圖示 (預設隱藏) -->
+      <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+    </button>
+    
+    <div class="hero-deco-num">01</div>
+  </div>
+
+  <div class="hero-media-right" data-hover>
+    <img src="image/名偵探光之美少女-森亜るるか2160X3840.jpg" alt="名偵探光之美少女">
+    <div class="hero-deco-num">02</div>
+    
+    <!-- 加入專屬的首頁 Metadata -->
+    <div class="artwork-meta hero-meta">
+      <span class="artwork-sub">Star Detective Precure!</span>
+      <div class="artwork-divider"></div>
+      <h3 class="artwork-title">名偵探光之美少女<br>森亜るるか</h3>
+      <span class="artwork-tag">Fan Art</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================
+     GALLERY
+     ============================ -->
+<main class="gallery-section">
+
+  <div class="gallery-header">
+    <div>
+      <h2 class="gallery-heading">
+        <em>Works</em>
+        作品集
+      </h2>
+    </div>
+    <span class="gallery-count mono" id="work-count">— / —</span>
+  </div>
+
+  <div class="gallery-items" id="gallery">
+
+    <!-- 原創 -->
+    <div class="artwork-row">
+      <div class="artwork-index mono">001</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原創-角色二1200X1800.jpg" alt="原創角色" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Original Character</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原創<br>角色</h3>
+        <span class="artwork-tag">Original</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">002</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原創-角色一1200X1800.jpg" alt="原創角色" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Original Character</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原創<br>角色</h3>
+        <span class="artwork-tag">Original</span>
+      </div>
+    </div>
+
+
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">003</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原創-角色三2845X1600.jpg" alt="原創角色" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Original Character</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原創<br>角色</h3>
+        <span class="artwork-tag">Original</span>
+      </div>
+    </div>
+
+
+
+
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">004</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/委託-OC一1080X1920.jpg" alt="委託-OC一" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Commission</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">委託<br>OC</h3>
+        <span class="artwork-tag">Commission</span>
+      </div>
+
+    </div>
+        <div class="artwork-row">
+      <div class="artwork-index mono">005</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/名偵探光之美少女-森亜るるか2160X3840.jpg" alt="名偵探光之美少女-森亜るるか" loading="lazy">
+      </div>
+        <div class="artwork-meta">
+        <span class="artwork-sub">Star Detective Precure!</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">名偵探光之美少女<br>森亜るるか</h3>
+        <span class="artwork-tag">Fan Art</span>
+        </div>
+    </div>
+        </div>
+        <div class="artwork-row">
+      <div class="artwork-index mono">006</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/蔚藍檔案-聯邦學生會長2160X3840.jpg" alt="蔚藍檔案-聯邦學生會長" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Blue Archive</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">蔚藍檔案<br>聯邦學生會長</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+    <div class="artwork-row">
+      <div class="artwork-index mono">007</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原神-蛍4022X5512.jpg" alt="原神-蛍" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Genshin Impact</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原神<br>蛍</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">008</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原創-角色四2Dlive1016X1600.gif" alt="原創-角色四 2D Live" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">2D Live Animation</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原創<br>角色 2D Live</h3>
+        <span class="artwork-tag">Original</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">009</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原創-角色五2160X3840.jpg" alt="原創-角色五" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Original Character</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原創<br>角色五</h3>
+        <span class="artwork-tag">Original</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">010</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/擅長逃跑的殿下-北條時行2756X3445.jpg" alt="擅長逃跑的殿下-北條時行" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">The Elusive Samurai</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">擅長逃跑的殿下<br>北條時行</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">011</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/決區零-浮波柚葉2160X3840.jpg" alt="絕區零-浮波柚葉" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Zenless Zone Zero</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">絕區零<br>浮波柚葉</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">012</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/航海王-培羅娜1200X675.jpg" alt="航海王-培羅娜" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">One Piece</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">航海王<br>培羅娜</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">013</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/蔚蓝档案-伊落マリー2160X3840.jpg" alt="蔚蓝档案-伊落マリー" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Blue Archive</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">蔚藍檔案<br>伊落マリー</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+
+
+    <div class="artwork-row">
+      <div class="artwork-index mono">014</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/鬼滅之刃-蝴蝶忍2343-3541.png" alt="鬼滅之刃-蝴蝶忍" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Demon Slayer</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">鬼滅之刃<br>蝴蝶忍</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+    <!-- R-18 作品 -->
+    <div class="artwork-row nsfw-wrap">
+      <div class="artwork-index mono">015</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/H學園偶像大師-藤田琴音2160X3840.jpg" alt="學園偶像大師-藤田琴音" loading="lazy">
+        <div class="nsfw-badge">
+          <span class="badge-mark">R — 18</span>
+          <span class="badge-hint">Age-restricted Content</span>
+        </div>
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Gakuen Idolmaster</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">學園偶像大師<br>藤田琴音</h3>
+        <span class="artwork-tag" style="color:var(--crimson);border-color:var(--crimson)">R-18</span>
+      </div>
+    </div>
+
+    <div class="artwork-row nsfw-wrap">
+      <div class="artwork-index mono">016</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/H絕區零-喬艾蓮2160X3840.jpg" alt="絕區零-喬艾蓮" loading="lazy">
+        <div class="nsfw-badge">
+          <span class="badge-mark">R — 18</span>
+          <span class="badge-hint">Age-restricted Content</span>
+        </div>
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Zenless Zone Zero</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">絕區零<br>喬艾蓮</h3>
+        <span class="artwork-tag" style="color:var(--crimson);border-color:var(--crimson)">R-18</span>
+      </div>
+    </div>
+
+    <div class="artwork-row nsfw-wrap">
+      <div class="artwork-index mono">017</div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/H蔚蓝档案-早濑优香2408X3728.jpg" alt="蔚蓝档案-早濑优香" loading="lazy">
+        <div class="nsfw-badge">
+          <span class="badge-mark">R — 18</span>
+          <span class="badge-hint">Age-restricted Content</span>
+        </div>
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Blue Archive</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">蔚藍檔案<br>早濑优香</h3>
+        <span class="artwork-tag" style="color:var(--crimson);border-color:var(--crimson)">R-18</span>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ============================
+     FOOTER
+     ============================ -->
+<footer class="site-footer">
+  <span class="footer-brand">Illustration Folio</span>
+  <span class="footer-copy mono">© 2025 · All Rights Reserved</span>
+</footer>
+
+<!-- ============================
+     FAB — R-18 按鈕
+     ============================ -->
+<div class="fab">
+  <button class="fab-btn" id="nsfw-btn" data-hover>R–18  OFF</button>
+</div>
+
+<!-- ============================
+     CUSTOM MODAL — 年齢確認
+     ============================ -->
+<div id="age-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-card">
+    <div class="modal-stripe"></div>
+    <div class="modal-body">
+      <div class="modal-eyebrow">Age Verification Required</div>
+      <h2 class="modal-title" id="modal-title">您即將進入<br>限制級內容區域</h2>
+      <p class="modal-desc">
+        本頁面包含供成人閱覽的 R-18 插畫作品，<br>
+        僅限年滿 18 歲以上人士瀏覽。
+      </p>
+      <p class="modal-subdesc">
+        By proceeding, you confirm that you are 18 years of age or older and consent to viewing adult-oriented content. This content is intended for mature audiences only.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-confirm" id="modal-confirm" data-hover>
+          我已滿 18 歲，繼續瀏覽
+        </button>
+        <button class="btn-cancel" id="modal-cancel" data-hover>
+          離開
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-text">Illustration Folio · Restricted Content</span>
+      <span class="modal-footer-text mono" id="modal-time">—</span>
+    </div>
+    <span class="modal-corner">R–18</span>
+  </div>
+</div>
+
+<!-- ============================
+     SCRIPT
+     ============================ -->
+<script>
+(function() {
+  /* ---- 基礎 DOM 元素 ---- */
+  const dot  = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  const artworkRows = document.querySelectorAll('.artwork-row');
+  const progressBar = document.getElementById('progress-bar');
+  
+  if (!dot || !ring || !progressBar) return; // Null Check
+
+  /* ---- 游標追蹤 ---- */
+  let rx = window.innerWidth / 2, ry = window.innerHeight / 2;
+  let mx = rx, my = ry;
+
+  window.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+  });
+
+  (function trackRing() {
+    rx += (mx - rx) * 0.13;
+    ry += (my - ry) * 0.13;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(trackRing);
+  })();
+
+  /* 游標 hover 事件綁定 (封裝成函數以利動態生成的元素使用) */
+  const attachHoverEffect = (element) => {
+    if (!element) return;
+    element.addEventListener('mouseenter', () => ring.classList.add('on-hover'));
+    element.addEventListener('mouseleave', () => ring.classList.remove('on-hover'));
+  };
+
+  document.querySelectorAll('[data-hover]').forEach(attachHoverEffect);
+
+  /* ---- 作品數量統計 ---- */
+  const workCountElem = document.getElementById('work-count');
+  if (workCountElem) {
+    workCountElem.textContent = '— ' + String(artworkRows.length).padStart(2,'0') + ' Works';
+  }
+
+  /* ---- 動態生成左側浮動進度條與縮圖 ---- */
+  const progressItems = [];
+  
+  artworkRows.forEach((row, index) => {
+    // 取得該行作品內的圖片 src
+    const imgElement = row.querySelector('img');
+    const src = imgElement ? imgElement.src : '';
+    const isNsfw = row.classList.contains('nsfw-wrap');
+    
+    // 建立縮圖按鈕
+    const thumbBtn = document.createElement('div');
+    thumbBtn.className = `progress-item ${isNsfw ? 'nsfw-thumb' : ''}`;
+    thumbBtn.innerHTML = `<img src="${src}" alt="thumbnail-${index}">`;
+    
+    // 綁定點擊平滑滾動事件
+    thumbBtn.addEventListener('click', () => {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    
+    // 綁定自訂游標 Hover 效果
+    attachHoverEffect(thumbBtn);
+    
+    progressBar.appendChild(thumbBtn);
+    progressItems.push(thumbBtn);
+  });
+
+  /* ---- Intersection Observer (畫廊滾動浮現 & 同步進度條高亮) ---- */
+  const obsOptions = { rootMargin: '-40% 0px -40% 0px', threshold: 0 };
+  
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        // 浮現動畫 (僅觸發一次)
+        e.target.classList.add('visible');
+        
+        // 尋找當前進入視窗中央的作品索引
+        const index = Array.from(artworkRows).indexOf(e.target);
+        if (index !== -1 && progressItems[index]) {
+          // 清除所有高亮，並加上當前進度的高亮
+          progressItems.forEach(item => item.classList.remove('active'));
+          progressItems[index].classList.add('active');
+        }
+      }
+    });
+  }, obsOptions);
+
+  artworkRows.forEach((row, i) => {
+    row.style.transitionDelay = (i % 3) * 0.05 + 's';
+    obs.observe(row);
+  });
+
+  /* ---- Custom Modal & R-18 邏輯 ---- */
+  const modal      = document.getElementById('age-modal');
+  const backdrop   = document.getElementById('modal-backdrop');
+  const confirmBtn = document.getElementById('modal-confirm');
+  const cancelBtn  = document.getElementById('modal-cancel');
+  const nsfwBtn    = document.getElementById('nsfw-btn');
+  const nsfwWraps  = document.querySelectorAll('.nsfw-wrap');
+  const nsfwThumbs = document.querySelectorAll('.nsfw-thumb'); // 抓取進度條的 R-18 縮圖
+  const timeLabel  = document.getElementById('modal-time');
+  let revealed = false;
+
+  if (modal && nsfwBtn) {
+    const openModal = () => {
+      if (timeLabel) timeLabel.textContent = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (confirmBtn) confirmBtn.focus();
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    const reveal = () => {
+      nsfwWraps.forEach(w => w.classList.add('revealed'));
+      nsfwThumbs.forEach(t => t.classList.add('revealed')); // 解除縮圖模糊
+      revealed = true;
+      nsfwBtn.textContent = 'R–18  ON';
+      nsfwBtn.classList.add('active');
+      closeModal();
+    };
+
+    const hide = () => {
+      nsfwWraps.forEach(w => w.classList.remove('revealed'));
+      nsfwThumbs.forEach(t => t.classList.remove('revealed')); // 恢復縮圖模糊
+      revealed = false;
+      nsfwBtn.textContent = 'R–18  OFF';
+      nsfwBtn.classList.remove('active');
+    };
+
+    nsfwBtn.addEventListener('click', () => {
+      if (!revealed) openModal();
+      else hide();
+    });
+
+    if (confirmBtn) confirmBtn.addEventListener('click', reveal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+  }
+
+  /* ---- 磁性 FAB ---- */
+  const fabBtn = document.querySelector('.fab-btn');
+  if (fabBtn) {
+    window.addEventListener('mousemove', e => {
+      const r = fabBtn.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top  + r.height/2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 90) {
+        fabBtn.style.transform = `translate(${dx*0.28}px, ${dy*0.28}px)`;
+      } else {
+        fabBtn.style.transform = 'translate(0,0)';
+      }
+    });
+  }
+  /* ---- 影片聲音切換邏輯 ---- */
+  const heroVideo = document.getElementById('hero-video');
+  const muteBtn = document.getElementById('mute-toggle-btn');
+  
+  // 確實檢查元素存在 (Null check)
+  if (heroVideo && muteBtn) {
+    const iconMuted = muteBtn.querySelector('.icon-muted');
+    const iconUnmuted = muteBtn.querySelector('.icon-unmuted');
+
+    muteBtn.addEventListener('click', (e) => {
+      // 避免點擊事件冒泡觸發其他 hover 或連結
+      e.stopPropagation(); 
+      
+      // 切換影片的靜音狀態
+      heroVideo.muted = !heroVideo.muted;
+      
+      // 根據狀態切換 SVG 顯示
+      if (heroVideo.muted) {
+        iconMuted.style.display = 'block';
+        iconUnmuted.style.display = 'none';
+      } else {
+        iconMuted.style.display = 'none';
+        iconUnmuted.style.display = 'block';
+      }
+    });
+
+    // 讓按鈕也能觸發自訂水墨游標的放大效果
+    muteBtn.addEventListener('mouseenter', () => {
+      if (ring) ring.classList.add('on-hover');
+    });
+    muteBtn.addEventListener('mouseleave', () => {
+      if (ring) ring.classList.remove('on-hover');
+    });
+  }
+
+})();
+
+</script>
+<script src="lightbox.js"></script>
+</body>
+</html>
