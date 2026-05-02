@@ -1,3 +1,17 @@
-".DS_Store" 
-"node_modules/" 
-"upload.bat"
+# --- 安全性 (最重要) ---
+# 隱藏包含 Token 的自動上傳腳本
+upload.bat
+
+# --- 系統垃圾檔案 ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- 編輯器設定 ---
+.vscode/
+.idea/
+*.log
+
+# --- 如果未來有使用 npm ---
+node_modules/
+dist/
