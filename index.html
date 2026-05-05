@@ -776,6 +776,24 @@ a, button, [data-hover] { cursor: none; }
     <div class="artwork-row nsfw-wrap">
       <div class="artwork-index mono">016</div>
       <div class="artwork-img-wrap" data-hover>
+        <img id="ye-yin-li-cg" src="image/葉音璃/葉音璃-CG1-1.jpg" alt="原創-葉音璃" loading="lazy">
+        <div class="nsfw-badge">
+          <span class="badge-mark">R — 18</span>
+          <span class="badge-hint">Age-restricted Content</span>
+        </div>
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">liyun project
+        </span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">梨雲計畫<br>葉音璃</h3>
+        <span class="artwork-tag" style="color:var(--crimson);border-color:var(--crimson)">R-18</span>
+      </div>
+    </div>
+
+    <div class="artwork-row nsfw-wrap">
+      <div class="artwork-index mono">016</div>
+      <div class="artwork-img-wrap" data-hover>
         <img src="image/H學園偶像大師-藤田琴音2160X3840.jpg" alt="學園偶像大師-藤田琴音" loading="lazy">
         <div class="nsfw-badge">
           <span class="badge-mark">R — 18</span>
@@ -1045,6 +1063,24 @@ a, button, [data-hover] { cursor: none; }
       }
     });
   }
+
+  /* ---- 葉音璃 圖片輪播 (每秒切換) ---- */
+  const yeImages = [
+    'image/葉音璃/葉音璃-CG1-1.jpg',
+    'image/葉音璃/葉音璃-CG1-2.jpg',
+    'image/葉音璃/葉音璃-CG1-3.jpg',
+    'image/葉音璃/葉音璃-CG1-4.jpg',
+    'image/葉音璃/葉音璃-CG1-5.jpg'
+  ];
+  const yeImgElement = document.getElementById('ye-yin-li-cg');
+  let yeCurrentIndex = 0;
+  if (yeImgElement) {
+    setInterval(() => {
+      yeCurrentIndex = (yeCurrentIndex + 1) % yeImages.length;
+      yeImgElement.src = yeImages[yeCurrentIndex];
+    }, 1000);
+  }
+
   /* ---- 影片聲音切換邏輯 ---- */
   const heroVideo = document.getElementById('hero-video');
   const muteBtn = document.getElementById('mute-toggle-btn');
