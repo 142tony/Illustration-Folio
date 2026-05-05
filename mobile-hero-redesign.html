@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<!--
+  =====================================================
+  手機版 Hero 重設計 — 差異說明
+  =====================================================
+  修改部分：
+  1. @media (max-width: 900px) 內的 hero 相關 CSS
+  2. 新增 .slide-indicator 樣式
+  3. JS：showSlide() 同步更新指示點
+  
+  設計理念：
+  - 全螢幕沉浸式影片（黑色底，漸層覆層）
+  - Metadata 從底部浮起，不阻擋影片主體
+  - 滑動指示線取代複雜的上下導覽按鈕
+  - 靜音按鈕定位在影片右上角
+  =====================================================
+-->
+
+<!-- ========== 貼入 <style> 區塊末尾 ========== -->
+<style>
+/* ====================================================
+   手機版 Hero 重設計
+   ==================================================== */
+@media (max-width: 900px) {
+
+  /* 1. 隱藏原生游標 */
+  #cur-dot, #cur-ring { display: none !important; }
+  body { cursor: auto !important; }
+  a, button, [data-hover] { cursor: pointer !important; }
+
+  /* 2. Hero 容器：填滿整個視口高度 */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    padding: 0;
+    border-bottom: none;
+  }
+  .hero-side-text { display: none; }
+
+  /* 3. 桌面版 Header 隱藏，改用覆層內的品牌文字 */
+  .hero-header {
+    display: none; /* 手機版改在覆層內顯示 */
+  }
+
+  /* 4. 幻燈片容器：撐滿剩餘高度 */
+  .hero-slides-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    min-height: 0; /* 修正 flex 子元素高度限制 */
+  }
+
+  /* 5. 每一張幻燈片：全螢幕黑底沉浸式 */
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    display: grid !important;
+    grid-template-columns: 1fr !important;  /* 覆蓋桌面版的 1fr 1fr */
+    grid-template-rows: 1fr !important;
+    background: #0d0a07;  /* 和紙深墨底色 */
+  }
+
+  /* 6. 左側媒體區（影片）：全螢幕填滿 */
+  .hero-media-left {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .hero-media-left video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 填滿，允許裁切 */
+    display: block;
+    box-shadow: none;
+    transform: none !important; /* 停用 hover transform */
+  }
+
+  /* 漸層覆層：從底部向上，保護 metadata 可讀性 */
+  .hero-media-left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top,
+        rgba(8,5,2,0.97) 0%,
+        rgba(8,5,2,0.75) 35%,
+        rgba(8,5,2,0.15) 65%,
+        transparent 100%),
+      linear-gradient(to bottom,
+        rgba(8,5,2,0.55) 0%,
+        transparent 25%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* 頂部品牌列（覆層內） */
+  .hero-media-left::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 80px;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* 裝飾大數字：調小並移至左上，作為背景紋理 */
+  .hero-deco-num {
+    position: absolute;
+    top: 52px;
+    left: 16px;
+    font-size: 3.5rem;
+    -webkit-text-stroke: 0.5px rgba(244,240,230,0.06);
+    display: block !important;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* 7. 右側媒體區（靜態圖）：手機版完全隱藏 */
+  .hero-media-right {
+    display: none !important;
+  }
+
+  /* 8. Metadata 覆層：絕對定位於影片底部 */
+  .hero .hero-meta {
+    position: absolute !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    padding: 0 20px 28px !important;
+    z-index: 10;
+    pointer-events: none;
+    text-align: left;
+    gap: 0 !important;
+  }
+
+  .hero .hero-meta .artwork-sub {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: rgba(244,240,230,0.45);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .hero .hero-meta .artwork-divider {
+    width: 20px;
+    height: 1px;
+    margin: 9px 0;
+  }
+
+  .hero .hero-meta .artwork-title {
+    font-size: 1.6rem;
+    line-height: 1.35;
+    color: rgba(244,240,230,0.95);
+    margin-bottom: 12px;
+    font-weight: 400;
+  }
+
+  .hero .hero-meta .artwork-tag {
+    font-size: 8.5px;
+    color: var(--crimson);
+    border-color: rgba(184,41,47,0.5);
+    padding: 3px 10px;
+    background: transparent;
+  }
+
+  /* 品牌欄（覆層頂部） */
+  .hero-brand-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 14px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .hero-brand-overlay .brand-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(244,240,230,0.45);
+  }
+
+  .hero-brand-overlay .brand-text em {
+    font-style: italic;
+    color: rgba(184,41,47,0.7);
+  }
+
+  .hero-brand-overlay .brand-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    color: rgba(244,240,230,0.25);
+  }
+
+  /* 9. 靜音按鈕：影片右上角 */
+  .mute-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    bottom: auto !important;
+    left: auto !important;
+    width: 34px;
+    height: 34px;
+    background: rgba(12,8,4,0.55) !important;
+    border: 1px solid rgba(244,240,230,0.12) !important;
+    color: rgba(244,240,230,0.7) !important;
+    backdrop-filter: blur(4px);
+    z-index: 20;
+  }
+
+  .mute-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* 10. 幻燈片指示線（新增，取代過去的箭頭導覽） */
+  .slide-indicator {
+    position: absolute;
+    bottom: 22px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .slide-indicator-dot {
+    height: 2px;
+    border-radius: 1px;
+    background: rgba(244,240,230,0.2);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 14px;
+  }
+
+  .slide-indicator-dot.active {
+    width: 24px;
+    background: var(--crimson);
+  }
+
+  /* Swipe 提示文字 */
+  .swipe-hint-text {
+    position: absolute;
+    bottom: 76px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 0.22em;
+    color: rgba(244,240,230,0.18);
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+  }
+
+  .swipe-hint-text::before,
+  .swipe-hint-text::after {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 1px;
+    background: rgba(244,240,230,0.12);
+  }
+
+  /* 11. 導覽按鈕重新定位：緊湊的左右箭頭在影片底部角落 */
+  .hero-nav-btn {
+    position: absolute;
+    top: auto !important;
+    bottom: 18px;
+    transform: none !important;
+    width: 34px;
+    height: 34px;
+    background: rgba(12,8,4,0.45) !important;
+    border: 1px solid rgba(244,240,230,0.12) !important;
+    backdrop-filter: blur(4px);
+    z-index: 15;
+  }
+
+  .hero-nav-btn:hover {
+    background: rgba(184,41,47,0.6) !important;
+    border-color: rgba(184,41,47,0.4) !important;
+    transform: scale(1.08) !important;
+  }
+
+  .hero-nav-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: rgba(244,240,230,0.65);
+  }
+
+  .hero-nav-btn:hover svg {
+    stroke: rgba(244,240,230,0.95);
+  }
+
+  /* 左箭頭靠近右邊的指示線組，形成緊湊按鈕群 */
+  .hero-nav-btn-left {
+    right: 62px !important;
+    left: auto !important;
+    margin: 0;
+  }
+
+  .hero-nav-btn-right {
+    right: 20px !important;
+    left: auto !important;
+    margin: 0;
+  }
+
+  /* 12. 其他區塊佈局重置（保留原有設定） */
+  .gallery-header { padding: 0 1.5rem 2.5rem; margin-bottom: 3rem; }
+  .gallery-heading { font-size: 1.6rem; }
+  .artwork-row { grid-template-columns: 1fr; padding: 3rem 1.5rem; gap: 1.5rem; }
+  .artwork-index { font-size: 0.8rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; width: 100%; }
+  .artwork-meta { display: flex; position: static; padding-top: 0.5rem; align-items: flex-start; text-align: left; }
+  .site-footer { flex-direction: column; gap: 1rem; padding: 3rem 2rem; text-align: center; }
+  .progress-bar { display: none; }
+  .fab { bottom: 1.5rem; right: 1.5rem; }
+  .modal-body { padding: 2rem 1.5rem; }
+  .modal-title { font-size: 1.4rem; }
+}
+</style>
+
+<!--
+  ========== HTML 修改：在每個 .hero-slide 內加入品牌覆層和指示點 ==========
+
+  在第一個 .hero-slide 的 .hero-media-left 內，加入：
+  1. .hero-brand-overlay（頂部品牌列）
+  2. .slide-indicator（底部指示線）
+  3. .swipe-hint-text（底部 swipe 提示）
+
+  範例（第一個 slide）：
+-->
+
+<!--
+<div class="hero-slide active">
+  <div class="hero-media-left" data-hover>
+    <video class="hero-video" autoplay loop muted playsinline>
+      <source src="image/名偵探光之美少女-森亜るるか1920x1080.mp4" type="video/mp4">
+    </video>
+
+    ← 新增：頂部品牌覆層 →
+    <div class="hero-brand-overlay">
+      <span class="brand-text">Illustration <em>Folio</em></span>
+      <span class="brand-year">2024–2026</span>
+    </div>
+
+    ← 保留：靜音按鈕 →
+    <button class="mute-toggle-btn mute-btn" aria-label="Toggle Audio">
+      ...
+    </button>
+
+    ← 保留：裝飾數字 →
+    <div class="hero-deco-num">01</div>
+
+    ← 新增：底部指示線（JS 會動態更新 active class） →
+    <div class="slide-indicator" id="slideIndicator">
+      <div class="slide-indicator-dot active"></div>
+      <div class="slide-indicator-dot"></div>
+    </div>
+
+    ← 新增：Swipe 提示 →
+    <div class="swipe-hint-text">Swipe</div>
+  </div>
+
+  ← 保留：Metadata，CSS 已重新定位為覆層 →
+  <div class="hero-media-right" data-hover>
+    <img src="..." alt="...">
+    <div class="artwork-meta hero-meta">
+      ...
+    </div>
+  </div>
+</div>
+-->
+
+
+<!--
+  ========== JS 修改：showSlide() 同步更新指示點 ==========
+
+  在原有 showSlide() 函式內，找到「更新導航按鈕狀態」那段後面加入：
+-->
+<script>
+/*
+  在現有 showSlide(index) 函式內新增以下邏輯：
+  （加在 heroSlides.forEach(...) 之後）
+
+  // 同步更新 slide 指示點
+  const indicatorDots = document.querySelectorAll('.slide-indicator-dot');
+  indicatorDots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentSlideIndex);
+  });
+*/
+
+/*
+  在現有 JS 的 showSlide() 函式內同步新增觸控滑動支援：
+  （加在 showSlide(0) 之後）
+
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const slidesContainer = document.querySelector('.hero-slides-container');
+
+  if (slidesContainer) {
+    slidesContainer.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    slidesContainer.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();  // 向左滑 → 下一張
+        else prevSlide();           // 向右滑 → 上一張
+      }
+    }, { passive: true });
+  }
+*/
+console.log('Mobile hero redesign — CSS + JS patch notes loaded.');
+</script>

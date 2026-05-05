@@ -526,7 +526,6 @@ a, button, [data-hover] { cursor: none; }
   .hero-media-left { 
     width: 85%;
     max-width: 360px;
-    aspect-ratio: 9 / 16; /* 設定 16:9 直向比例 */
     padding: 0 !important;
     border: none;
     position: relative;
@@ -537,8 +536,8 @@ a, button, [data-hover] { cursor: none; }
   }
   .hero-media-left video { 
     width: 100%;
-    height: 100%;
-    object-fit: cover; /* 確保影片填滿 9:16 容器 */
+    height: auto;
+    object-fit: contain; /* 完整顯示影片內容，不進行任何裁切 */
     display: block;
   }
 
@@ -582,19 +581,8 @@ a, button, [data-hover] { cursor: none; }
 
   /* 8. 導航按鈕：移至畫面正下方，集中於大拇指好操作的「熱區」 */
   .hero-nav-btn {
-    top: auto;
-    bottom: 1.5rem;
-    transform: translateX(-50%); /* 以中心點為基準 */
-    left: 50%;
-    right: auto; /* 重置桌面版的 right 設定 */
-    width: 46px; 
-    height: 46px;
-    background: var(--surface);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: none !important; /* 手機版隱藏按鈕，改用滑動切換 */
   }
-  /* 計算 50% 減去按鈕寬度與間距，達成完美置中對齊 */
-  .hero-nav-btn-left { margin-left: -4rem; } /* 向左偏移 */ /* 保持與上次修改一致 */
-  .hero-nav-btn-right { margin-left: 7rem; } /* 向右偏移 */ /* 修正為對稱位置 */
 
   /* ============================
      其他區塊佈局重置 (保留原設定，進行微調)
@@ -1387,6 +1375,26 @@ a, button, [data-hover] { cursor: none; }
 
   if (navLeftBtn) navLeftBtn.addEventListener('click', prevSlide);
   if (navRightBtn) navRightBtn.addEventListener('click', nextSlide);
+
+  /* ---- 手機版滑動切換邏輯 ---- */
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const slidesContainer = document.querySelector('.hero-slides-container');
+
+  if (slidesContainer) {
+    slidesContainer.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    slidesContainer.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const swipeDistance = touchStartX - touchEndX;
+      if (Math.abs(swipeDistance) > 50) { // 滑動超過 50px 才觸發
+        if (swipeDistance > 0) nextSlide(); // 向左滑 -> 下一張
+        else prevSlide(); // 向右滑 -> 上一張
+      }
+    }, { passive: true });
+  }
 
   showSlide(0); // 初始化顯示第一個幻燈片
 
