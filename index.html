@@ -275,6 +275,7 @@ a, button, [data-hover] { cursor: none; }
 }
 .progress-item.nsfw-thumb.revealed img { filter: none; }
 
+
 /* ============================
    GALLERY 畫廊區塊
    ============================ */
@@ -473,75 +474,227 @@ a, button, [data-hover] { cursor: none; }
 .footer-copy { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: var(--ink-muted); opacity: 0.6; }
 
 /* ============================
-   響應式設計 (Mobile)
+   響應式設計 (Mobile) - Optimized
    ============================ */
 @media (max-width: 900px) {
-  /* 隱藏觸控裝置不需要的自定義游標 */
+  /* 1. 重置游標與觸控行為 */
   #cur-dot, #cur-ring { display: none !important; }
   body { cursor: auto !important; }
   a, button, [data-hover] { cursor: pointer !important; }
 
+  /* 2. Hero 區塊主體：使用 100dvh 適應動態視口，改為 Flex 垂直佈局 */
   .hero { 
-    grid-template-columns: 1fr; 
-    grid-template-rows: auto auto auto; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    padding: 0;
+    border-bottom: none;
   }
   .hero-side-text { display: none; }
 
+  /* 3. 頭部標題：取消左右 padding，改為置中並簡化間距 */
   .hero-header { 
-    padding: 2.5rem 1.5rem; 
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-  .hero-title { font-size: 1.8rem; letter-spacing: 0.15em; }
-  .hero-nav-label { font-size: 0.6rem; }
-
-  .hero-media-left { 
-    grid-column: 1; 
-    border-right: none; 
-    border-bottom: 1px solid var(--line); 
-    padding: 2rem 1.5rem;
-    min-height: auto;
-  }
-  .hero-media-left video { max-height: 50vh; }
-
-  .hero-media-right { 
-    grid-column: 1;
-    padding: 3rem 1.5rem;
+    padding: 1.5rem 1.5rem 1rem; 
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+    border-bottom: none;
   }
-  .hero-media-right img { max-width: 100%; max-height: 60vh; }
+  .hero-title { font-size: 1.8rem; letter-spacing: 0.15em; }
+  .hero-nav-label { font-size: 0.65rem; }
+
+  /* 4. 輪播容器：填滿剩餘高度 */
+  .hero-slides-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* 5. 單一輪播內容：絕對定位於容器內，內部使用 Flex 垂直置中 */
+  .hero-slide {
+    display: flex !important; 
+    flex-direction: column !important;
+    align-items: center;
+    /* Removed justify-content: center to allow content to flow naturally */
+    padding: 0 1.5rem 8rem; /* 增加底部留白，確保影片和資訊有足夠空間，避免與導航按鈕重疊 */
+    gap: 1.5rem; /* 影片與作品資訊的間距 */
+  }
+
+  /* 6. 媒體區塊 (左側影片) */
+  .hero-media-left { 
+    width: 85%;
+    max-width: 360px;
+    aspect-ratio: 9 / 16; /* 設定 16:9 直向比例 */
+    padding: 0 !important;
+    border: none;
+    position: relative;
+    border-radius: 4px; /* 加入微圓角提升精緻度 */
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    margin: 0 auto; /* 確保水平置中 */
+  }
+  .hero-media-left video { 
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 確保影片填滿 9:16 容器 */
+    display: block;
+  }
+
+  /* 裝飾數字：手機版隱藏以保持畫面乾淨，避免干擾主要視覺 */
+  .hero-deco-num { display: none; }
+
+  /* 靜音按鈕：縮小並調整至右下角 */
+  .mute-btn {
+    bottom: 0.8rem; 
+    right: 0.8rem; 
+    width: 36px;
+    height: 36px;
+    background: rgba(28, 23, 16, 0.5); 
+    color: #fff;
+    border: none;
+  }
+  .mute-btn svg { width: 16px; height: 16px; }
+
+  /* 7. 資訊區塊 (右側內容) */
+  .hero-media-right { 
+    width: 100%;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* 保持隱藏靜態圖，讓手機版專注於影片與文字 */
+  .hero-media-right img { display: none !important; } 
   
   .hero .hero-meta {
     position: static;
     transform: none;
     width: 100%;
-    padding-top: 2rem;
+    align-items: center; /* 讓 metadata 標籤與文字置中 */
+    text-align: center;
+    padding: 0;
     pointer-events: auto;
+    gap: 0.6rem;
   }
+  .artwork-title { font-size: 1.4rem; }
 
+  /* 8. 導航按鈕：移至畫面正下方，集中於大拇指好操作的「熱區」 */
+  .hero-nav-btn {
+    top: auto;
+    bottom: 1.5rem;
+    transform: translateX(-50%); /* 以中心點為基準 */
+    left: 50%;
+    right: auto; /* 重置桌面版的 right 設定 */
+    width: 46px; 
+    height: 46px;
+    background: var(--surface);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  /* 計算 50% 減去按鈕寬度與間距，達成完美置中對齊 */
+  .hero-nav-btn-left { margin-left: -4rem; } /* 向左偏移 */ /* 保持與上次修改一致 */
+  .hero-nav-btn-right { margin-left: 7rem; } /* 向右偏移 */ /* 修正為對稱位置 */
+
+  /* ============================
+     其他區塊佈局重置 (保留原設定，進行微調)
+     ============================ */
   .gallery-header { padding: 0 1.5rem 2.5rem; margin-bottom: 3rem; }
   .gallery-heading { font-size: 1.6rem; }
-
-  .artwork-row { 
-    grid-template-columns: 1fr; 
-    padding: 3rem 1.5rem; 
-    gap: 1.5rem; 
-  }
+  .artwork-row { grid-template-columns: 1fr; padding: 3rem 1.5rem; gap: 1.5rem; }
   .artwork-index { font-size: 0.8rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; width: 100%; }
-  .artwork-meta { 
-    display: flex; 
-    position: static; 
-    padding-top: 0.5rem;
-  }
-
+  .artwork-meta { display: flex; position: static; padding-top: 0.5rem; align-items: flex-start; text-align: left; }
   .site-footer { flex-direction: column; gap: 1rem; padding: 3rem 2rem; text-align: center; }
   .progress-bar { display: none; }
   .fab { bottom: 1.5rem; right: 1.5rem; }
   .modal-body { padding: 2rem 1.5rem; }
   .modal-title { font-size: 1.4rem; }
+}
+/* ============================
+   HERO 區塊佈局 (Slider)
+   ============================ */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr; /* Header, then content area */
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-slides-container {
+  grid-column: 1 / -1; /* Spans both columns */
+  grid-row: 2; /* Below the header */
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Video on left, image on right */
+  opacity: 0;
+  pointer-events: none; /* Prevent interaction when not active */
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+
+.hero-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Navigation Buttons --- */
+.hero-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50; /* Above slides, below custom cursor */
+  background: rgba(244, 240, 230, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition: all 0.3s var(--ease-out-expo);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.hero-nav-btn:hover {
+  background: var(--ink);
+  color: var(--parchment);
+  transform: translateY(-50%) scale(1.1);
+  border-color: var(--ink);
+}
+.hero-nav-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--ink);
+  transition: stroke 0.3s;
+}
+.hero-nav-btn:hover svg {
+  stroke: var(--parchment);
+}
+.hero-nav-btn-right { right: 2rem; }
+.hero-nav-btn-left { left: 6rem; }
+.hero-nav-btn:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  transform: translateY(-50%) scale(1); /* Reset transform on disabled */
+  background: rgba(244, 240, 230, 0.4);
+  border-color: var(--line);
+}
+.hero-nav-btn:disabled svg {
+  stroke: var(--ink);
 }
 </style>
 </head>
@@ -567,42 +720,89 @@ a, button, [data-hover] { cursor: none; }
     <span class="hero-nav-label">Portfolio · 2024–2026</span>
   </div>
 
-  <div class="hero-media-left" data-hover>
-    <!-- 加上 id 以便 JS 選取 -->
-    <video id="hero-video" autoplay loop muted playsinline>
-      <source src="image/名偵探光之美少女-森亜るるか1920x1080.mp4" type="video/mp4">
-    </video>
-    
-    <!-- 新增：聲音切換按鈕 -->
-    <button id="mute-toggle-btn" class="mute-btn" aria-label="Toggle Audio">
-      <!-- 靜音圖示 (預設顯示) -->
-      <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-        <line x1="23" y1="9" x2="17" y2="15"></line>
-        <line x1="17" y1="9" x2="23" y2="15"></line>
-      </svg>
-      <!-- 播放聲音圖示 (預設隱藏) -->
-      <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-      </svg>
-    </button>
-    
-    <div class="hero-deco-num">01</div>
-  </div>
+  <div class="hero-slides-container">
+    <!-- Group 1 -->
+    <div class="hero-slide active">
+      <div class="hero-media-left" data-hover>
+        <video class="hero-video" autoplay loop muted playsinline>
+          <source src="image/名偵探光之美少女-森亜るるか1920x1080.mp4" type="video/mp4">
+        </video>
+        
+        <button class="mute-toggle-btn mute-btn" aria-label="Toggle Audio">
+          <!-- 靜音圖示 (預設顯示) -->
+          <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+          <!-- 播放聲音圖示 (預設隱藏) -->
+          <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+        
+        <div class="hero-deco-num">01</div>
+      </div>
 
-  <div class="hero-media-right" data-hover>
-    <img src="image/名偵探光之美少女-森亜るるか2160X3840.jpg" alt="名偵探光之美少女">
-    <div class="hero-deco-num">02</div>
-    
-    <!-- 加入專屬的首頁 Metadata -->
-    <div class="artwork-meta hero-meta">
-      <span class="artwork-sub">Star Detective Precure!</span>
-      <div class="artwork-divider"></div>
-      <h3 class="artwork-title">名偵探光之美少女<br>森亜るるか</h3>
-      <span class="artwork-tag">Fan Art</span>
+      <div class="hero-media-right" data-hover>
+        <img src="image/名偵探光之美少女-森亜るるか2160X3840.jpg" alt="名偵探光之美少女">
+        <div class="hero-deco-num">02</div>
+        
+        <!-- 加入專屬的首頁 Metadata -->
+        <div class="artwork-meta hero-meta">
+          <span class="artwork-sub">Star Detective Precure!</span>
+          <div class="artwork-divider"></div>
+          <h3 class="artwork-title">名偵探光之美少女<br>森亜るるか</h3>
+          <span class="artwork-tag">Fan Art</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 2 -->
+    <div class="hero-slide">
+      <div class="hero-media-left" data-hover>
+        <video class="hero-video" autoplay loop muted playsinline>
+          <source src="image/NTE-小吱2160X3840.mp4" type="video/mp4">
+        </video>
+        
+        <button class="mute-toggle-btn mute-btn" aria-label="Toggle Audio">
+          <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+          <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+        
+        <div class="hero-deco-num">03</div>
+      </div>
+
+      <div class="hero-media-right" data-hover>
+        <img src="image\NTE-小吱2160X3840.jpg" alt="異環《NTE》">
+        <div class="hero-deco-num">04</div>
+        
+        <!-- 加入專屬的首頁 Metadata -->
+        <div class="artwork-meta hero-meta">
+          <span class="artwork-sub">Neverness to Everness</span>
+          <div class="artwork-divider"></div>
+          <h3 class="artwork-title">異環《NTE》<br>小吱</h3>
+          <span class="artwork-tag">Fan Art</span>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Navigation Buttons -->
+  <button class="hero-nav-btn hero-nav-btn-left" aria-label="Previous Slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+  <button class="hero-nav-btn hero-nav-btn-right" aria-label="Next Slide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
 </header>
 
 <!-- ============================
@@ -1137,24 +1337,74 @@ a, button, [data-hover] { cursor: none; }
     }, 1000);
   }
 
-  /* ---- 影片聲音切換邏輯 ---- */
-  const heroVideo = document.getElementById('hero-video');
-  const muteBtn = document.getElementById('mute-toggle-btn');
-  
-  // 確實檢查元素存在 (Null check)
-  if (heroVideo && muteBtn) {
-    const iconMuted = muteBtn.querySelector('.icon-muted');
-    const iconUnmuted = muteBtn.querySelector('.icon-unmuted');
+  /* ---- Hero Slider 邏輯 ---- */
+  const heroSlides = document.querySelectorAll('.hero-slide');
+  const navLeftBtn = document.querySelector('.hero-nav-btn-left');
+  const navRightBtn = document.querySelector('.hero-nav-btn-right');
+  let currentSlideIndex = 0;
 
-    muteBtn.addEventListener('click', (e) => {
-      // 避免點擊事件冒泡觸發其他 hover 或連結
-      e.stopPropagation(); 
-      
-      // 切換影片的靜音狀態
-      heroVideo.muted = !heroVideo.muted;
-      
-      // 根據狀態切換 SVG 顯示
-      if (heroVideo.muted) {
+  const showSlide = (index) => {
+    // 確保索引在有效範圍內，並實現無限循環
+    if (index < 0) {
+      currentSlideIndex = heroSlides.length - 1;
+    } else if (index >= heroSlides.length) {
+      currentSlideIndex = 0;
+    } else {
+      currentSlideIndex = index;
+    }
+
+    heroSlides.forEach((slide, i) => {
+      const video = slide.querySelector('.hero-video');
+      if (i === currentSlideIndex) {
+        slide.classList.add('active');
+        if (video) video.play(); // 播放當前幻燈片的影片
+      } else {
+        slide.classList.remove('active');
+        if (video) {
+          video.pause(); // 暫停非當前幻燈片的影片
+          video.currentTime = 0; // 重置影片到開頭
+        }
+      }
+    });
+
+    // 更新導航按鈕狀態 (如果需要禁用，可以根據 currentSlideIndex 判斷)
+    // 目前設定為無限循環，所以按鈕不會被禁用
+    if (navLeftBtn) {
+      // navLeftBtn.disabled = currentSlideIndex === 0; // 如果不想無限循環，可以啟用這行
+    }
+    if (navRightBtn) {
+      // navRightBtn.disabled = currentSlideIndex === heroSlides.length - 1; // 如果不想無限循環，可以啟用這行
+    }
+  };
+
+  const nextSlide = () => {
+    showSlide(currentSlideIndex + 1);
+  };
+
+  const prevSlide = () => {
+    showSlide(currentSlideIndex - 1);
+  };
+
+  if (navLeftBtn) navLeftBtn.addEventListener('click', prevSlide);
+  if (navRightBtn) navRightBtn.addEventListener('click', nextSlide);
+
+  showSlide(0); // 初始化顯示第一個幻燈片
+
+  /* ---- 影片聲音切換邏輯 ---- */
+  const videoContainers = document.querySelectorAll('.hero-media-left');
+  
+  videoContainers.forEach(container => {
+    const video = container.querySelector('.hero-video');
+    const btn = container.querySelector('.mute-toggle-btn');
+    if (!video || !btn) return;
+
+    const iconMuted = btn.querySelector('.icon-muted');
+    const iconUnmuted = btn.querySelector('.icon-unmuted');
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      video.muted = !video.muted;
+      if (video.muted) {
         iconMuted.style.display = 'block';
         iconUnmuted.style.display = 'none';
       } else {
@@ -1163,16 +1413,270 @@ a, button, [data-hover] { cursor: none; }
       }
     });
 
-    // 讓按鈕也能觸發自訂水墨游標的放大效果
-    muteBtn.addEventListener('mouseenter', () => {
+    btn.addEventListener('mouseenter', () => {
       if (ring) ring.classList.add('on-hover');
     });
-    muteBtn.addEventListener('mouseleave', () => {
+    btn.addEventListener('mouseleave', () => {
       if (ring) ring.classList.remove('on-hover');
+    });
+  });
+
+})();
+
+</script>
+<script src="lightbox.js"></script>
+</body>
+</html>g.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(trackRing);
+  })();
+
+  /* 游標 hover 事件綁定 (封裝成函數以利動態生成的元素使用) */
+  const attachHoverEffect = (element) => {
+    if (!element) return;
+    element.addEventListener('mouseenter', () => ring.classList.add('on-hover'));
+    element.addEventListener('mouseleave', () => ring.classList.remove('on-hover'));
+  };
+
+  document.querySelectorAll('[data-hover]').forEach(attachHoverEffect);
+
+  /* ---- 作品數量統計 ---- */
+  const workCountElem = document.getElementById('work-count');
+  if (workCountElem) {
+    workCountElem.textContent = '— ' + String(artworkRows.length).padStart(2,'0') + ' Works';
+  }
+
+  /* ---- 動態生成左側浮動進度條與縮圖 ---- */
+  const progressItems = [];
+  
+  artworkRows.forEach((row, index) => {
+    // 取得該行作品內的圖片 src
+    const imgElement = row.querySelector('img');
+    const src = imgElement ? imgElement.src : '';
+    const isNsfw = row.classList.contains('nsfw-wrap');
+    
+    // 建立縮圖按鈕
+    const thumbBtn = document.createElement('div');
+    thumbBtn.className = `progress-item ${isNsfw ? 'nsfw-thumb' : ''}`;
+    thumbBtn.innerHTML = `<img src="${src}" alt="thumbnail-${index}">`;
+    
+    // 綁定點擊平滑滾動事件
+    thumbBtn.addEventListener('click', () => {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    
+    // 綁定自訂游標 Hover 效果
+    attachHoverEffect(thumbBtn);
+    
+    progressBar.appendChild(thumbBtn);
+    progressItems.push(thumbBtn);
+  });
+
+  /* ---- Intersection Observer (畫廊滾動浮現 & 同步進度條高亮) ---- */
+  const obsOptions = { rootMargin: '-40% 0px -40% 0px', threshold: 0 };
+  
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        // 浮現動畫 (僅觸發一次)
+        e.target.classList.add('visible');
+        
+        // 尋找當前進入視窗中央的作品索引
+        const index = Array.from(artworkRows).indexOf(e.target);
+        if (index !== -1 && progressItems[index]) {
+          // 清除所有高亮，並加上當前進度的高亮
+          progressItems.forEach(item => item.classList.remove('active'));
+          progressItems[index].classList.add('active');
+        }
+      }
+    });
+  }, obsOptions);
+
+  artworkRows.forEach((row, i) => {
+    row.style.transitionDelay = (i % 3) * 0.05 + 's';
+    obs.observe(row);
+  });
+
+  /* ---- Custom Modal & R-18 邏輯 ---- */
+  const modal      = document.getElementById('age-modal');
+  const backdrop   = document.getElementById('modal-backdrop');
+  const confirmBtn = document.getElementById('modal-confirm');
+  const cancelBtn  = document.getElementById('modal-cancel');
+  const nsfwBtn    = document.getElementById('nsfw-btn');
+  const nsfwWraps  = document.querySelectorAll('.nsfw-wrap');
+  const nsfwThumbs = document.querySelectorAll('.nsfw-thumb'); // 抓取進度條的 R-18 縮圖
+  const timeLabel  = document.getElementById('modal-time');
+  let revealed = false;
+
+  if (modal && nsfwBtn) {
+    const openModal = () => {
+      if (timeLabel) timeLabel.textContent = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (confirmBtn) confirmBtn.focus();
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    const reveal = () => {
+      nsfwWraps.forEach(w => w.classList.add('revealed'));
+      nsfwThumbs.forEach(t => t.classList.add('revealed')); // 解除縮圖模糊
+      revealed = true;
+      nsfwBtn.textContent = 'R–18  ON';
+      nsfwBtn.classList.add('active');
+      closeModal();
+    };
+
+    const hide = () => {
+      nsfwWraps.forEach(w => w.classList.remove('revealed'));
+      nsfwThumbs.forEach(t => t.classList.remove('revealed')); // 恢復縮圖模糊
+      revealed = false;
+      nsfwBtn.textContent = 'R–18  OFF';
+      nsfwBtn.classList.remove('active');
+    };
+
+    nsfwBtn.addEventListener('click', () => {
+      if (!revealed) openModal();
+      else hide();
+    });
+
+    if (confirmBtn) confirmBtn.addEventListener('click', reveal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
     });
   }
 
+  /* ---- 磁性 FAB ---- */
+  const fabBtn = document.querySelector('.fab-btn');
+  if (fabBtn) {
+    window.addEventListener('mousemove', e => {
+      const r = fabBtn.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top  + r.height/2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 90) {
+        fabBtn.style.transform = `translate(${dx*0.28}px, ${dy*0.28}px)`;
+      } else {
+        fabBtn.style.transform = 'translate(0,0)';
+      }
+    });
+  }
+
+  /* ---- 葉音璃 圖片輪播 (每秒切換) ---- */
+  const yeImages = [
+    'image/葉音璃/葉音璃-CG1-1.jpg',
+    'image/葉音璃/葉音璃-CG1-2.jpg',
+    'image/葉音璃/葉音璃-CG1-3.jpg',
+    'image/葉音璃/葉音璃-CG1-4.jpg',
+    'image/葉音璃/葉音璃-CG1-5.jpg'
+  ];
+  const yeImgElement = document.getElementById('ye-yin-li-cg');
+  let yeCurrentIndex = 0;
+  if (yeImgElement) {
+    setInterval(() => {
+      yeCurrentIndex = (yeCurrentIndex + 1) % yeImages.length;
+      yeImgElement.src = yeImages[yeCurrentIndex];
+    }, 1000);
+  }
+
+  /* ---- Hero Slider 邏輯 ---- */
+  const heroSlides = document.querySelectorAll('.hero-slide');
+  const navLeftBtn = document.querySelector('.hero-nav-btn-left');
+  const navRightBtn = document.querySelector('.hero-nav-btn-right');
+  let currentSlideIndex = 0;
+
+  const showSlide = (index) => {
+    // 確保索引在有效範圍內，並實現無限循環
+    if (index < 0) {
+      currentSlideIndex = heroSlides.length - 1;
+    } else if (index >= heroSlides.length) {
+      currentSlideIndex = 0;
+    } else {
+      currentSlideIndex = index;
+    }
+
+    heroSlides.forEach((slide, i) => {
+      const video = slide.querySelector('.hero-video');
+      if (i === currentSlideIndex) {
+        slide.classList.add('active');
+        if (video) video.play(); // 播放當前幻燈片的影片
+      } else {
+        slide.classList.remove('active');
+        if (video) {
+          video.pause(); // 暫停非當前幻燈片的影片
+          video.currentTime = 0; // 重置影片到開頭
+        }
+      }
+    });
+
+    // 更新導航按鈕狀態 (如果需要禁用，可以根據 currentSlideIndex 判斷)
+    // 目前設定為無限循環，所以按鈕不會被禁用
+    if (navLeftBtn) {
+      // navLeftBtn.disabled = currentSlideIndex === 0; // 如果不想無限循環，可以啟用這行
+    }
+    if (navRightBtn) {
+      // navRightBtn.disabled = currentSlideIndex === heroSlides.length - 1; // 如果不想無限循環，可以啟用這行
+    }
+  };
+
+  const nextSlide = () => {
+    showSlide(currentSlideIndex + 1);
+  };
+
+  const prevSlide = () => {
+    showSlide(currentSlideIndex - 1);
+  };
+
+  if (navLeftBtn) navLeftBtn.addEventListener('click', prevSlide);
+  if (navRightBtn) navRightBtn.addEventListener('click', nextSlide);
+
+  showSlide(0); // 初始化顯示第一個幻燈片
+
+  /* ---- 影片聲音切換邏輯 ---- */
+  const videoContainers = document.querySelectorAll('.hero-media-left');
+  
+  videoContainers.forEach(container => {
+    const video = container.querySelector('.hero-video');
+    const btn = container.querySelector('.mute-toggle-btn');
+    if (!video || !btn) return;
+
+    const iconMuted = btn.querySelector('.icon-muted');
+    const iconUnmuted = btn.querySelector('.icon-unmuted');
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      video.muted = !video.muted;
+      if (video.muted) {
+        iconMuted.style.display = 'block';
+        iconUnmuted.style.display = 'none';
+      } else {
+        iconMuted.style.display = 'none';
+        iconUnmuted.style.display = 'block';
+      }
+    });
+
+    btn.addEventListener('mouseenter', () => {
+      if (ring) ring.classList.add('on-hover');
+    });
+    btn.addEventListener('mouseleave', () => {
+      if (ring) ring.classList.remove('on-hover');
+    });
+  });
+
 })();
+
+</script>
+<script src="lightbox.js"></script>
+</body>
+</html>
 
 </script>
 <script src="lightbox.js"></script>
