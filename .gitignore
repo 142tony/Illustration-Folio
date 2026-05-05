@@ -1,7 +1,7 @@
 # --- 安全性 (最重要) ---
 # 隱藏包含 Token 的自動上傳腳本
 upload.bat
-
+run_server.bat
 # --- 系統垃圾檔案 ---
 .DS_Store
 Thumbs.db
