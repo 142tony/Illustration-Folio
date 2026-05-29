@@ -138,8 +138,8 @@ a, button, [data-hover] { cursor: none; }
   grid-column: 2; 
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* 讓右側圖片往左靠 */
-  padding: 3rem 4rem; /* 增加內邊距 */
+  justify-content: flex-start;
+  padding: 3rem 4rem;
   position: relative;
   overflow: hidden;
 }
@@ -154,7 +154,7 @@ a, button, [data-hover] { cursor: none; }
 }
 
 .hero-media-right img {
-  max-width: 55%; /* 關鍵：縮小圖片寬度，強制讓出右側空間給文字 */
+  max-width: 55%;
   max-height: 70vh;
   object-fit: contain;
   display: block;
@@ -184,12 +184,12 @@ a, button, [data-hover] { cursor: none; }
    ============================ */
 .mute-btn {
   position: absolute;
-  bottom: 5.5rem; /* 放在左下角與右側的 01 達成平衡 */
+  bottom: 5.5rem;
   right: 2.5rem; 
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(244, 240, 230, 0.6); /* 呼應 parchment 底色，帶點半透明 */
+  background: rgba(244, 240, 230, 0.6);
   border: 1px solid var(--line);
   color: var(--ink);
   display: flex;
@@ -198,7 +198,7 @@ a, button, [data-hover] { cursor: none; }
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 20;
-  cursor: none; /* 隱藏原生游標，使用我們的水墨游標 */
+  cursor: none;
   transition: all 0.3s var(--ease-out-expo);
 }
 
@@ -217,16 +217,16 @@ a, button, [data-hover] { cursor: none; }
 
 /* --- 首頁獨立 Meta 文字定位 --- */
 .hero .hero-meta {
-  position: absolute; /* 覆蓋原本的 sticky */
+  position: absolute;
   top: 50%;
-  transform: translateY(-50%); /* 完美垂直置中對齊圖片 */
-  right: 4rem; /* 靠右放置 */
+  transform: translateY(-50%);
+  right: 4rem;
   left: auto;
   bottom: auto;
-  width: 35%; /* 給予固定寬度避免折行擁擠 */
+  width: 35%;
   z-index: 10;
   margin: 0;
-  pointer-events: none; /* 防止干擾圖片 hover */
+  pointer-events: none;
 }
 
 /* ============================
@@ -477,12 +477,10 @@ a, button, [data-hover] { cursor: none; }
    響應式設計 (Mobile) - Optimized
    ============================ */
 @media (max-width: 900px) {
-  /* 1. 重置游標與觸控行為 */
   #cur-dot, #cur-ring { display: none !important; }
   body { cursor: auto !important; }
   a, button, [data-hover] { cursor: pointer !important; }
 
-  /* 2. Hero 區塊主體：使用 100dvh 適應動態視口，改為 Flex 垂直佈局 */
   .hero { 
     display: flex;
     flex-direction: column;
@@ -492,7 +490,6 @@ a, button, [data-hover] { cursor: none; }
   }
   .hero-side-text { display: none; }
 
-  /* 3. 頭部標題：取消左右 padding，改為置中並簡化間距 */
   .hero-header { 
     padding: 1.5rem 1.5rem 1rem; 
     flex-direction: column;
@@ -504,7 +501,6 @@ a, button, [data-hover] { cursor: none; }
   .hero-title { font-size: 1.8rem; letter-spacing: 0.15em; }
   .hero-nav-label { font-size: 0.65rem; }
 
-  /* 4. 輪播容器：填滿剩餘高度 */
   .hero-slides-container {
     flex: 1;
     position: relative;
@@ -512,39 +508,34 @@ a, button, [data-hover] { cursor: none; }
     overflow: hidden;
   }
 
-  /* 5. 單一輪播內容：絕對定位於容器內，內部使用 Flex 垂直置中 */
   .hero-slide {
     display: flex !important; 
     flex-direction: column !important;
     align-items: center;
-    /* Removed justify-content: center to allow content to flow naturally */
-    padding: 0 1.5rem 8rem; /* 增加底部留白，確保影片和資訊有足夠空間，避免與導航按鈕重疊 */
-    gap: 1.5rem; /* 影片與作品資訊的間距 */
+    padding: 0 1.5rem 8rem;
+    gap: 1.5rem;
   }
 
-  /* 6. 媒體區塊 (左側影片) */
   .hero-media-left { 
     width: 85%;
     max-width: 360px;
     padding: 0 !important;
     border: none;
     position: relative;
-    border-radius: 4px; /* 加入微圓角提升精緻度 */
+    border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-    margin: 0 auto; /* 確保水平置中 */
+    margin: 0 auto;
   }
   .hero-media-left video { 
     width: 100%;
     height: auto;
-    object-fit: contain; /* 完整顯示影片內容，不進行任何裁切 */
+    object-fit: contain;
     display: block;
   }
 
-  /* 裝飾數字：手機版隱藏以保持畫面乾淨，避免干擾主要視覺 */
   .hero-deco-num { display: none; }
 
-  /* 靜音按鈕：縮小並調整至右下角 */
   .mute-btn {
     bottom: 0.8rem; 
     right: 0.8rem; 
@@ -556,7 +547,6 @@ a, button, [data-hover] { cursor: none; }
   }
   .mute-btn svg { width: 16px; height: 16px; }
 
-  /* 7. 資訊區塊 (右側內容) */
   .hero-media-right { 
     width: 100%;
     padding: 0 !important;
@@ -564,14 +554,13 @@ a, button, [data-hover] { cursor: none; }
     flex-direction: column;
     align-items: center;
   }
-  /* 保持隱藏靜態圖，讓手機版專注於影片與文字 */
   .hero-media-right img { display: none !important; } 
   
   .hero .hero-meta {
     position: static;
     transform: none;
     width: 100%;
-    align-items: center; /* 讓 metadata 標籤與文字置中 */
+    align-items: center;
     text-align: center;
     padding: 0;
     pointer-events: auto;
@@ -579,14 +568,10 @@ a, button, [data-hover] { cursor: none; }
   }
   .artwork-title { font-size: 1.4rem; }
 
-  /* 8. 導航按鈕：移至畫面正下方，集中於大拇指好操作的「熱區」 */
   .hero-nav-btn {
-    display: none !important; /* 手機版隱藏按鈕，改用滑動切換 */
+    display: none !important;
   }
 
-  /* ============================
-     其他區塊佈局重置 (保留原設定，進行微調)
-     ============================ */
   .gallery-header { padding: 0 1.5rem 2.5rem; margin-bottom: 3rem; }
   .gallery-heading { font-size: 1.6rem; }
   .artwork-row { grid-template-columns: 1fr; padding: 3rem 1.5rem; gap: 1.5rem; }
@@ -605,7 +590,7 @@ a, button, [data-hover] { cursor: none; }
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr; /* Header, then content area */
+  grid-template-rows: auto 1fr;
   padding: 0;
   position: relative;
   overflow: hidden;
@@ -613,8 +598,8 @@ a, button, [data-hover] { cursor: none; }
 }
 
 .hero-slides-container {
-  grid-column: 1 / -1; /* Spans both columns */
-  grid-row: 2; /* Below the header */
+  grid-column: 1 / -1;
+  grid-row: 2;
   position: relative;
   width: 100%;
   height: 100%;
@@ -627,9 +612,9 @@ a, button, [data-hover] { cursor: none; }
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Video on left, image on right */
+  grid-template-columns: 1fr 1fr;
   opacity: 0;
-  pointer-events: none; /* Prevent interaction when not active */
+  pointer-events: none;
   transition: opacity 0.6s var(--ease-out-expo);
 }
 
@@ -643,7 +628,7 @@ a, button, [data-hover] { cursor: none; }
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 50; /* Above slides, below custom cursor */
+  z-index: 50;
   background: rgba(244, 240, 230, 0.7);
   border: 1px solid var(--line);
   border-radius: 50%;
@@ -677,7 +662,7 @@ a, button, [data-hover] { cursor: none; }
 .hero-nav-btn:disabled {
   opacity: 0.3;
   pointer-events: none;
-  transform: translateY(-50%) scale(1); /* Reset transform on disabled */
+  transform: translateY(-50%) scale(1);
   background: rgba(244, 240, 230, 0.4);
   border-color: var(--line);
 }
@@ -688,16 +673,11 @@ a, button, [data-hover] { cursor: none; }
 </head>
 <body>
 <script src="preloader.js"></script>
-<!-- 游標 -->
 <div id="cur-dot"></div>
 <div id="cur-ring"></div>
 
-<!-- 浮動進度條容器 (JS 動態生成內容) -->
 <nav class="progress-bar" id="progress-bar"></nav>
 
-<!-- ============================
-     HERO
-     ============================ -->
 <header class="hero">
   <div class="hero-side-text">Illustration Portfolio — Original & Fan Art</div>
 
@@ -709,7 +689,6 @@ a, button, [data-hover] { cursor: none; }
   </div>
 
   <div class="hero-slides-container">
-    <!-- Group 1 -->
     <div class="hero-slide active">
       <div class="hero-media-left" data-hover>
         <video class="hero-video" autoplay loop muted playsinline>
@@ -717,13 +696,11 @@ a, button, [data-hover] { cursor: none; }
         </video>
         
         <button class="mute-toggle-btn mute-btn" aria-label="Toggle Audio">
-          <!-- 靜音圖示 (預設顯示) -->
           <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <line x1="23" y1="9" x2="17" y2="15"></line>
             <line x1="17" y1="9" x2="23" y2="15"></line>
           </svg>
-          <!-- 播放聲音圖示 (預設隱藏) -->
           <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
@@ -737,7 +714,6 @@ a, button, [data-hover] { cursor: none; }
         <img src="image/名偵探光之美少女-森亜るるか2160X3840.jpg" alt="名偵探光之美少女">
         <div class="hero-deco-num">02</div>
         
-        <!-- 加入專屬的首頁 Metadata -->
         <div class="artwork-meta hero-meta">
           <span class="artwork-sub">Star Detective Precure!</span>
           <div class="artwork-divider"></div>
@@ -747,7 +723,6 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-    <!-- Group 2 -->
     <div class="hero-slide">
       <div class="hero-media-left" data-hover>
         <video class="hero-video" autoplay loop muted playsinline>
@@ -773,7 +748,6 @@ a, button, [data-hover] { cursor: none; }
         <img src="image\NTE-小吱2160X3840.jpg" alt="異環《NTE》">
         <div class="hero-deco-num">04</div>
         
-        <!-- 加入專屬的首頁 Metadata -->
         <div class="artwork-meta hero-meta">
           <span class="artwork-sub">Neverness to Everness</span>
           <div class="artwork-divider"></div>
@@ -784,7 +758,6 @@ a, button, [data-hover] { cursor: none; }
     </div>
   </div>
 
-  <!-- Navigation Buttons -->
   <button class="hero-nav-btn hero-nav-btn-left" aria-label="Previous Slide">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
   </button>
@@ -793,9 +766,6 @@ a, button, [data-hover] { cursor: none; }
   </button>
 </header>
 
-<!-- ============================
-     GALLERY
-     ============================ -->
 <main class="gallery-section">
 
   <div class="gallery-header">
@@ -810,36 +780,47 @@ a, button, [data-hover] { cursor: none; }
 
   <div class="gallery-items" id="gallery">
 
-    </div>
-        <div class="artwork-row">
-      <div class="artwork-index mono">001</div>
+    <div class="artwork-row">
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/名偵探光之美少女-森亜るるか2160X3840.jpg" alt="名偵探光之美少女-森亜るるか" loading="lazy">
       </div>
-        <div class="artwork-meta">
+      <div class="artwork-meta">
         <span class="artwork-sub">Star Detective Precure!</span>
         <div class="artwork-divider"></div>
         <h3 class="artwork-title">名偵探光之美少女<br>森亜るるか</h3>
         <span class="artwork-tag">Fan Art</span>
-        </div>
+      </div>
     </div>
 
-    </div>
-        <div class="artwork-row">
-      <div class="artwork-index mono">002</div>
+    <div class="artwork-row">
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/NTE-小吱2160X3840.jpg" alt="異環NTE-小吱" loading="lazy">
       </div>
-        <div class="artwork-meta">
+      <div class="artwork-meta">
         <span class="artwork-sub">Neverness to Everness</span>  
         <div class="artwork-divider"></div>
         <h3 class="artwork-title">異環《NTE》<br>小吱</h3>
         <span class="artwork-tag">Fan Art</span>
-        </div>
+      </div>
     </div>
-    
+
     <div class="artwork-row">
-      <div class="artwork-index mono">003</div>
+      <div class="artwork-index mono"></div>
+      <div class="artwork-img-wrap" data-hover>
+        <img src="image/原神-サンドローネ2250X3750.jpg" alt="原神-サンドローネ" loading="lazy">
+      </div>
+      <div class="artwork-meta">
+        <span class="artwork-sub">Genshin Impact</span>
+        <div class="artwork-divider"></div>
+        <h3 class="artwork-title">原神<br>サンドローネ</h3>
+        <span class="artwork-tag">Fan Art</span>
+      </div>
+    </div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原神-蛍3840X2160.jpg" alt="原神-蛍" loading="lazy">
       </div>
@@ -850,8 +831,9 @@ a, button, [data-hover] { cursor: none; }
         <span class="artwork-tag">Fan Art</span>
       </div>
     </div>
-        <div class="artwork-row">
-      <div class="artwork-index mono">004</div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原神-蛍4022X5512.jpg" alt="原神-蛍" loading="lazy">
       </div>
@@ -863,9 +845,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
     
-
     <div class="artwork-row">
-      <div class="artwork-index mono">005</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原創-角色二1200X1800.jpg" alt="原創角色" loading="lazy">
       </div>
@@ -878,7 +859,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row">
-      <div class="artwork-index mono">006</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原創-角色一1200X1800.jpg" alt="原創角色" loading="lazy">
       </div>
@@ -890,10 +871,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-
-
     <div class="artwork-row">
-      <div class="artwork-index mono">007</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原創-角色三2845X1600.jpg" alt="原創角色" loading="lazy">
       </div>
@@ -906,7 +885,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row">
-      <div class="artwork-index mono">008</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原創-角色四2Dlive1016X1600.gif" alt="原創-角色四 2D Live" loading="lazy">
       </div>
@@ -917,9 +896,9 @@ a, button, [data-hover] { cursor: none; }
         <span class="artwork-tag">Original</span>
       </div>
     </div>
-        </div>
-        <div class="artwork-row">
-      <div class="artwork-index mono">009</div>
+
+    <div class="artwork-row">
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/蔚藍檔案-聯邦學生會長2160X3840.jpg" alt="蔚藍檔案-聯邦學生會長" loading="lazy">
       </div>
@@ -931,9 +910,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-
     <div class="artwork-row">
-      <div class="artwork-index mono">010</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/委託-OC一1080X1920.jpg" alt="委託-OC一" loading="lazy">
       </div>
@@ -945,9 +923,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-
     <div class="artwork-row">
-      <div class="artwork-index mono">011</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/決區零-浮波柚葉2160X3840.jpg" alt="絕區零-浮波柚葉" loading="lazy">
       </div>
@@ -960,7 +937,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row">
-      <div class="artwork-index mono">012</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/蔚蓝档案-伊落マリー2160X3840.jpg" alt="蔚蓝档案-伊落マリー" loading="lazy">
       </div>
@@ -973,7 +950,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row">
-      <div class="artwork-index mono">013</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/原創-角色五2160X3840.jpg" alt="原創-角色五" loading="lazy">
       </div>
@@ -986,7 +963,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row">
-      <div class="artwork-index mono">014</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/擅長逃跑的殿下-北條時行2756X3445.jpg" alt="擅長逃跑的殿下-北條時行" loading="lazy">
       </div>
@@ -998,9 +975,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-
     <div class="artwork-row">
-      <div class="artwork-index mono">015</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/航海王-培羅娜1200X675.jpg" alt="航海王-培羅娜" loading="lazy">
       </div>
@@ -1012,12 +988,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-
-
-
-
     <div class="artwork-row">
-      <div class="artwork-index mono">016</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/鬼滅之刃-蝴蝶忍2343-3541.png" alt="鬼滅之刃-蝴蝶忍" loading="lazy">
       </div>
@@ -1029,9 +1001,8 @@ a, button, [data-hover] { cursor: none; }
       </div>
     </div>
 
-    <!-- R-18 作品 -->
     <div class="artwork-row nsfw-wrap">
-      <div class="artwork-index mono">017</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img id="ye-yin-li-cg" src="image/葉音璃/葉音璃-CG1-1.jpg" alt="原創-葉音璃" loading="lazy">
         <div class="nsfw-badge">
@@ -1040,8 +1011,7 @@ a, button, [data-hover] { cursor: none; }
         </div>
       </div>
       <div class="artwork-meta">
-        <span class="artwork-sub">liyun project
-        </span>
+        <span class="artwork-sub">liyun project</span>
         <div class="artwork-divider"></div>
         <h3 class="artwork-title">梨雲計畫(原創)<br>葉音璃</h3>
         <span class="artwork-tag" style="color:var(--crimson);border-color:var(--crimson)">R-18</span>
@@ -1049,7 +1019,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row nsfw-wrap">
-      <div class="artwork-index mono">018</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/H學園偶像大師-藤田琴音2160X3840.jpg" alt="學園偶像大師-藤田琴音" loading="lazy">
         <div class="nsfw-badge">
@@ -1066,7 +1036,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row nsfw-wrap">
-      <div class="artwork-index mono">019</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/H絕區零-喬艾蓮2160X3840.jpg" alt="絕區零-喬艾蓮" loading="lazy">
         <div class="nsfw-badge">
@@ -1083,7 +1053,7 @@ a, button, [data-hover] { cursor: none; }
     </div>
 
     <div class="artwork-row nsfw-wrap">
-      <div class="artwork-index mono">020</div>
+      <div class="artwork-index mono"></div>
       <div class="artwork-img-wrap" data-hover>
         <img src="image/H蔚蓝档案-早濑优香2408X3728.jpg" alt="蔚蓝档案-早濑优香" loading="lazy">
         <div class="nsfw-badge">
@@ -1102,24 +1072,15 @@ a, button, [data-hover] { cursor: none; }
   </div>
 </main>
 
-<!-- ============================
-     FOOTER
-     ============================ -->
 <footer class="site-footer">
   <span class="footer-brand">Illustration Folio</span>
   <span class="footer-copy mono">© 2026 · All Rights Reserved</span>
 </footer>
 
-<!-- ============================
-     FAB — R-18 按鈕
-     ============================ -->
 <div class="fab">
   <button class="fab-btn" id="nsfw-btn" data-hover>R–18  OFF</button>
 </div>
 
-<!-- ============================
-     CUSTOM MODAL — 年齢確認
-     ============================ -->
 <div id="age-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal-backdrop" id="modal-backdrop"></div>
   <div class="modal-card">
@@ -1151,300 +1112,7 @@ a, button, [data-hover] { cursor: none; }
   </div>
 </div>
 
-<!-- ============================
-     SCRIPT
-     ============================ -->
-<script>
-(function() {
-  /* ---- 基礎 DOM 元素 ---- */
-  const dot  = document.getElementById('cur-dot');
-  const ring = document.getElementById('cur-ring');
-  const artworkRows = document.querySelectorAll('.artwork-row');
-  const progressBar = document.getElementById('progress-bar');
-  
-  if (!dot || !ring || !progressBar) return; // Null Check
-
-  /* ---- 游標追蹤 ---- */
-  let rx = window.innerWidth / 2, ry = window.innerHeight / 2;
-  let mx = rx, my = ry;
-
-  window.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
-  });
-
-  (function trackRing() {
-    rx += (mx - rx) * 0.13;
-    ry += (my - ry) * 0.13;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(trackRing);
-  })();
-
-  /* 游標 hover 事件綁定 (封裝成函數以利動態生成的元素使用) */
-  const attachHoverEffect = (element) => {
-    if (!element) return;
-    element.addEventListener('mouseenter', () => ring.classList.add('on-hover'));
-    element.addEventListener('mouseleave', () => ring.classList.remove('on-hover'));
-  };
-
-  document.querySelectorAll('[data-hover]').forEach(attachHoverEffect);
-
-  /* ---- 作品數量統計 ---- */
-  const workCountElem = document.getElementById('work-count');
-  if (workCountElem) {
-    workCountElem.textContent = '— ' + String(artworkRows.length).padStart(2,'0') + ' Works';
-  }
-
-  /* ---- 動態生成左側浮動進度條與縮圖 ---- */
-  const progressItems = [];
-  
-  artworkRows.forEach((row, index) => {
-    // 取得該行作品內的圖片 src
-    const imgElement = row.querySelector('img');
-    const src = imgElement ? imgElement.src : '';
-    const isNsfw = row.classList.contains('nsfw-wrap');
-    
-    // 建立縮圖按鈕
-    const thumbBtn = document.createElement('div');
-    thumbBtn.className = `progress-item ${isNsfw ? 'nsfw-thumb' : ''}`;
-    thumbBtn.innerHTML = `<img src="${src}" alt="thumbnail-${index}">`;
-    
-    // 綁定點擊平滑滾動事件
-    thumbBtn.addEventListener('click', () => {
-      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    
-    // 綁定自訂游標 Hover 效果
-    attachHoverEffect(thumbBtn);
-    
-    progressBar.appendChild(thumbBtn);
-    progressItems.push(thumbBtn);
-  });
-
-  /* ---- Intersection Observer (畫廊滾動浮現 & 同步進度條高亮) ---- */
-  const obsOptions = { rootMargin: '-40% 0px -40% 0px', threshold: 0 };
-  
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        // 浮現動畫 (僅觸發一次)
-        e.target.classList.add('visible');
-        
-        // 尋找當前進入視窗中央的作品索引
-        const index = Array.from(artworkRows).indexOf(e.target);
-        if (index !== -1 && progressItems[index]) {
-          // 清除所有高亮，並加上當前進度的高亮
-          progressItems.forEach(item => item.classList.remove('active'));
-          progressItems[index].classList.add('active');
-        }
-      }
-    });
-  }, obsOptions);
-
-  artworkRows.forEach((row, i) => {
-    row.style.transitionDelay = (i % 3) * 0.05 + 's';
-    obs.observe(row);
-  });
-
-  /* ---- Custom Modal & R-18 邏輯 ---- */
-  const modal      = document.getElementById('age-modal');
-  const backdrop   = document.getElementById('modal-backdrop');
-  const confirmBtn = document.getElementById('modal-confirm');
-  const cancelBtn  = document.getElementById('modal-cancel');
-  const nsfwBtn    = document.getElementById('nsfw-btn');
-  const nsfwWraps  = document.querySelectorAll('.nsfw-wrap');
-  const nsfwThumbs = document.querySelectorAll('.nsfw-thumb'); // 抓取進度條的 R-18 縮圖
-  const timeLabel  = document.getElementById('modal-time');
-  let revealed = false;
-
-  if (modal && nsfwBtn) {
-    const openModal = () => {
-      if (timeLabel) timeLabel.textContent = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      if (confirmBtn) confirmBtn.focus();
-    };
-
-    const closeModal = () => {
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-    };
-
-    const reveal = () => {
-      nsfwWraps.forEach(w => w.classList.add('revealed'));
-      nsfwThumbs.forEach(t => t.classList.add('revealed')); // 解除縮圖模糊
-      revealed = true;
-      nsfwBtn.textContent = 'R–18  ON';
-      nsfwBtn.classList.add('active');
-      closeModal();
-    };
-
-    const hide = () => {
-      nsfwWraps.forEach(w => w.classList.remove('revealed'));
-      nsfwThumbs.forEach(t => t.classList.remove('revealed')); // 恢復縮圖模糊
-      revealed = false;
-      nsfwBtn.textContent = 'R–18  OFF';
-      nsfwBtn.classList.remove('active');
-    };
-
-    nsfwBtn.addEventListener('click', () => {
-      if (!revealed) openModal();
-      else hide();
-    });
-
-    if (confirmBtn) confirmBtn.addEventListener('click', reveal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (backdrop) backdrop.addEventListener('click', closeModal);
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
-    });
-  }
-
-  /* ---- 磁性 FAB ---- */
-  const fabBtn = document.querySelector('.fab-btn');
-  if (fabBtn) {
-    window.addEventListener('mousemove', e => {
-      const r = fabBtn.getBoundingClientRect();
-      const cx = r.left + r.width/2;
-      const cy = r.top  + r.height/2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      const dist = Math.hypot(dx, dy);
-      if (dist < 90) {
-        fabBtn.style.transform = `translate(${dx*0.28}px, ${dy*0.28}px)`;
-      } else {
-        fabBtn.style.transform = 'translate(0,0)';
-      }
-    });
-  }
-
-  /* ---- 葉音璃 圖片輪播 (每秒切換) ---- */
-  const yeImages = [
-    'image/葉音璃/葉音璃-CG1-1.jpg',
-    'image/葉音璃/葉音璃-CG1-2.jpg',
-    'image/葉音璃/葉音璃-CG1-3.jpg',
-    'image/葉音璃/葉音璃-CG1-4.jpg',
-    'image/葉音璃/葉音璃-CG1-5.jpg'
-  ];
-  const yeImgElement = document.getElementById('ye-yin-li-cg');
-  let yeCurrentIndex = 0;
-  if (yeImgElement) {
-    setInterval(() => {
-      yeCurrentIndex = (yeCurrentIndex + 1) % yeImages.length;
-      yeImgElement.src = yeImages[yeCurrentIndex];
-    }, 1000);
-  }
-
-  /* ---- Hero Slider 邏輯 ---- */
-  const heroSlides = document.querySelectorAll('.hero-slide');
-  const navLeftBtn = document.querySelector('.hero-nav-btn-left');
-  const navRightBtn = document.querySelector('.hero-nav-btn-right');
-  let currentSlideIndex = 0;
-
-  const showSlide = (index) => {
-    // 確保索引在有效範圍內，並實現無限循環
-    if (index < 0) {
-      currentSlideIndex = heroSlides.length - 1;
-    } else if (index >= heroSlides.length) {
-      currentSlideIndex = 0;
-    } else {
-      currentSlideIndex = index;
-    }
-
-    heroSlides.forEach((slide, i) => {
-      const video = slide.querySelector('.hero-video');
-      if (i === currentSlideIndex) {
-        slide.classList.add('active');
-        if (video) video.play(); // 播放當前幻燈片的影片
-      } else {
-        slide.classList.remove('active');
-        if (video) {
-          video.pause(); // 暫停非當前幻燈片的影片
-          video.currentTime = 0; // 重置影片到開頭
-        }
-      }
-    });
-
-    // 更新導航按鈕狀態 (如果需要禁用，可以根據 currentSlideIndex 判斷)
-    // 目前設定為無限循環，所以按鈕不會被禁用
-    if (navLeftBtn) {
-      // navLeftBtn.disabled = currentSlideIndex === 0; // 如果不想無限循環，可以啟用這行
-    }
-    if (navRightBtn) {
-      // navRightBtn.disabled = currentSlideIndex === heroSlides.length - 1; // 如果不想無限循環，可以啟用這行
-    }
-  };
-
-  const nextSlide = () => {
-    showSlide(currentSlideIndex + 1);
-  };
-
-  const prevSlide = () => {
-    showSlide(currentSlideIndex - 1);
-  };
-
-  if (navLeftBtn) navLeftBtn.addEventListener('click', prevSlide);
-  if (navRightBtn) navRightBtn.addEventListener('click', nextSlide);
-
-  /* ---- 手機版滑動切換邏輯 ---- */
-  let touchStartX = 0;
-  let touchEndX = 0;
-  const slidesContainer = document.querySelector('.hero-slides-container');
-
-  if (slidesContainer) {
-    slidesContainer.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    slidesContainer.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      const swipeDistance = touchStartX - touchEndX;
-      if (Math.abs(swipeDistance) > 50) { // 滑動超過 50px 才觸發
-        if (swipeDistance > 0) nextSlide(); // 向左滑 -> 下一張
-        else prevSlide(); // 向右滑 -> 上一張
-      }
-    }, { passive: true });
-  }
-
-  showSlide(0); // 初始化顯示第一個幻燈片
-
-  /* ---- 影片聲音切換邏輯 ---- */
-  const videoContainers = document.querySelectorAll('.hero-media-left');
-  
-  videoContainers.forEach(container => {
-    const video = container.querySelector('.hero-video');
-    const btn = container.querySelector('.mute-toggle-btn');
-    if (!video || !btn) return;
-
-    const iconMuted = btn.querySelector('.icon-muted');
-    const iconUnmuted = btn.querySelector('.icon-unmuted');
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      video.muted = !video.muted;
-      if (video.muted) {
-        iconMuted.style.display = 'block';
-        iconUnmuted.style.display = 'none';
-      } else {
-        iconMuted.style.display = 'none';
-        iconUnmuted.style.display = 'block';
-      }
-    });
-
-    btn.addEventListener('mouseenter', () => {
-      if (ring) ring.classList.add('on-hover');
-    });
-    btn.addEventListener('mouseleave', () => {
-      if (ring) ring.classList.remove('on-hover');
-    });
-  });
-
-})();
-
-</script>
+<script src="script.js"></script>
 <script src="lightbox.js"></script>
 </body>
 </html>
