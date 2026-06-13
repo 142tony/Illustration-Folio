@@ -104,11 +104,15 @@
   overlay.appendChild(hint);
   document.body.appendChild(overlay);
 
-  // 3. 狀態變數 (縮放與拖曳)
+    // 3. 狀態變數 (縮放與拖曳)
   let scale = 1;
   let isDragging = false;
   let startX, startY;
   let translateX = 0, translateY = 0;
+  let wheelTimeout = null;
+
+  // 啟用 GPU 合成層
+  if (img) img.style.willChange = 'transform';
 
   // 4. 更新圖片的變形狀態
   const updateTransform = () => {
@@ -146,35 +150,36 @@
     if (e.key === 'Escape' && overlay.classList.contains('active')) closeLightbox();
   });
 
-  // 7. 滑鼠滾輪縮放邏輯 (Zoom) - 【已優化：縮回中心點】
+    // 7. 滑鼠滾輪縮放邏輯 (Zoom) - 【已優化：縮回中心點 + rAF節流】
   container.addEventListener('wheel', (e) => {
     e.preventDefault();
-    const zoomSensitivity = 0.15; // 稍微調高靈敏度讓縮放更順
+    const zoomSensitivity = 0.15;
     const oldScale = scale;
 
-    // deltaY < 0 代表往上滾 (放大)，反之縮小
     if (e.deltaY < 0) {
       scale += zoomSensitivity;
     } else {
       scale -= zoomSensitivity;
     }
     
-    // 限制縮放比例 (最小 1 倍，最大 5 倍) -> 這樣縮到底就是原本大小
     scale = Math.min(Math.max(1, scale), 5);
 
-    // 核心邏輯：控制縮小時回到中心
     if (scale === 1) {
-      // 當縮放比例回到 1 時，強制平移座標歸零（完美置中）
       translateX = 0;
       translateY = 0;
     } else {
-      // 放大或縮小時，讓目前的偏移量也等比例縮放，這樣縮小時畫面會自然往中心收攏
       const ratio = scale / oldScale;
       translateX *= ratio;
       translateY *= ratio;
     }
 
-    updateTransform();
+    // 以 requestAnimationFrame 節流 DOM 寫入
+    if (wheelTimeout === null) {
+      wheelTimeout = requestAnimationFrame(() => {
+        updateTransform();
+        wheelTimeout = null;
+      });
+    }
   }, { passive: false });
 
   // 8. 滑鼠拖曳平移邏輯 (Pan)

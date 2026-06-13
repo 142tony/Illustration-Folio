@@ -10,23 +10,39 @@
   // 動態抓取最新的作品列（以利後續編號與觀察）
   const getArtworkRows = () => galleryContainer.querySelectorAll('.artwork-row');
 
-  /* ---- 游標追蹤 ---- */
-  let rx = window.innerWidth / 2, ry = window.innerHeight / 2;
-  let mx = rx, my = ry;
+    /* ---- 游標追蹤 (GPU 加速 + 節流) ---- */
+    let rx = window.innerWidth / 2, ry = window.innerHeight / 2;
+    let mx = rx, my = ry;
+    let tickScheduled = false;
 
-  window.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
-  });
+    // 預先將 dot / ring 放入合成層 (GPU 加速)，使用 transform 取代 left/top
+    if (dot) {
+      dot.style.willChange = 'transform';
+      dot.style.transform = `translate(${mx - 2.5}px, ${my - 2.5}px)`;
+    }
+    if (ring) {
+      ring.style.willChange = 'transform';
+      ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px)`;
+    }
 
-  (function trackRing() {
-    rx += (mx - rx) * 0.13;
-    ry += (my - ry) * 0.13;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(trackRing);
-  })();
+    window.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      // 使用 requestAnimationFrame 節流 DOM 寫入
+      if (!tickScheduled) {
+        tickScheduled = true;
+        requestAnimationFrame(() => {
+          if (dot) dot.style.transform = `translate(${mx - 2.5}px, ${my - 2.5}px)`;
+          tickScheduled = false;
+        });
+      }
+    }, { passive: true });
+
+    (function trackRing() {
+      rx += (mx - rx) * 0.13;
+      ry += (my - ry) * 0.13;
+      if (ring) ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px)`;
+      requestAnimationFrame(trackRing);
+    })();
 
   /* 游標 hover 事件綁定 */
   const attachHoverEffect = (element) => {
@@ -79,20 +95,17 @@
     progressItems.push(thumbBtn);
   });
 
-  /* ---- Intersection Observer (畫廊滾動浮現 & 同步進度條高亮) ---- */
+    /* ---- Intersection Observer (畫廊滾動浮現 & 同步進度條高亮) ---- */
   const obsOptions = { rootMargin: '-40% 0px -40% 0px', threshold: 0 };
+  let cachedRows = Array.from(getArtworkRows());
   
   const obs = new IntersectionObserver(entries => {
-    const freshRows = Array.from(getArtworkRows());
     entries.forEach(e => {
       if (e.isIntersecting) {
-        // 浮現動畫 (僅觸發一次)
         e.target.classList.add('visible');
         
-        // 尋找當前進入視窗中央的作品索引
-        const index = freshRows.indexOf(e.target);
+        const index = cachedRows.indexOf(e.target);
         if (index !== -1 && progressItems[index]) {
-          // 清除所有高亮，並加上當前進度的高亮
           progressItems.forEach(item => item.classList.remove('active'));
           progressItems[index].classList.add('active');
         }
@@ -100,7 +113,7 @@
     });
   }, obsOptions);
 
-  currentRows.forEach((row, i) => {
+  cachedRows.forEach((row, i) => {
     row.style.transitionDelay = (i % 3) * 0.05 + 's';
     obs.observe(row);
   });
@@ -160,25 +173,40 @@
     });
   }
 
-  /* ---- 磁性 FAB ---- */
+    /* ---- 磁性 FAB (節流避免 layout thrashing) ---- */
   const fabBtn = document.querySelector('.fab-btn');
   if (fabBtn) {
-    window.addEventListener('mousemove', e => {
+    let fabX = 0, fabY = 0, fabW = 0, fabH = 0;
+    // 以 requestAnimationFrame 批次更新 FAB 尺寸資訊
+    let fabUpdateScheduled = false;
+    const updateFabRect = () => {
+      fabUpdateScheduled = false;
       const r = fabBtn.getBoundingClientRect();
-      const cx = r.left + r.width/2;
-      const cy = r.top  + r.height/2;
+      fabX = r.left; fabY = r.top; fabW = r.width; fabH = r.height;
+    };
+    updateFabRect(); // 初始化
+    // 定期更新尺寸 (scroll, resize 可能導致位置改變)
+    window.addEventListener('scroll', () => {
+      if (!fabUpdateScheduled) { fabUpdateScheduled = true; requestAnimationFrame(updateFabRect); }
+    }, { passive: true });
+    window.addEventListener('resize', updateFabRect, { passive: true });
+
+    window.addEventListener('mousemove', e => {
+      if (fabUpdateScheduled) return; // 避免與 Rect 更新競爭
+      const cx = fabX + fabW / 2;
+      const cy = fabY + fabH / 2;
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
       const dist = Math.hypot(dx, dy);
       if (dist < 90) {
-        fabBtn.style.transform = `translate(${dx*0.28}px, ${dy*0.28}px)`;
+        fabBtn.style.transform = `translate(${dx * 0.28}px, ${dy * 0.28}px)`;
       } else {
         fabBtn.style.transform = 'translate(0,0)';
       }
-    });
+    }, { passive: true });
   }
 
-  /* ---- 葉音璃 圖片輪播 (每秒切換) ---- */
+    /* ---- 葉音璃 圖片輪播 (預載 + requestAnimationFrame) ---- */
   const yeImages = [
     'image/葉音璃/葉音璃-CG1-1.jpg',
     'image/葉音璃/葉音璃-CG1-2.jpg',
@@ -189,17 +217,43 @@
   const yeImgElement = document.getElementById('ye-yin-li-cg');
   let yeCurrentIndex = 0;
   if (yeImgElement) {
-    setInterval(() => {
-      yeCurrentIndex = (yeCurrentIndex + 1) % yeImages.length;
-      yeImgElement.src = yeImages[yeCurrentIndex];
-    }, 1000);
+    // 預載所有圖片
+    const preloaded = [];
+    yeImages.forEach((src, i) => {
+      const pre = new Image();
+      pre.src = src;
+      preloaded[i] = pre;
+    });
+
+    let lastYeTime = 0;
+    const yeTick = (now) => {
+      if (yeImgElement && yeImgElement.isConnected) {
+        if (now - lastYeTime >= 1000) {
+          lastYeTime = now;
+          yeCurrentIndex = (yeCurrentIndex + 1) % yeImages.length;
+          yeImgElement.src = yeImages[yeCurrentIndex];
+        }
+        requestAnimationFrame(yeTick);
+      }
+    };
+    requestAnimationFrame(yeTick);
   }
 
-  /* ---- Hero Slider 邏輯 ---- */
+    /* ---- Hero Slider 自動編號 ─ 根據出現順序動態填入 hero-deco-num ---- */
   const heroSlides = document.querySelectorAll('.hero-slide');
   const navLeftBtn = document.querySelector('.hero-nav-btn-left');
   const navRightBtn = document.querySelector('.hero-nav-btn-right');
   let currentSlideIndex = 0;
+
+  // 遍歷所有 hero-slide，將其內部的 hero-deco-num 依序填入兩位數編號
+  let decoCounter = 1;
+  heroSlides.forEach(slide => {
+    const decoNums = slide.querySelectorAll('.hero-deco-num');
+    decoNums.forEach(el => {
+      el.textContent = String(decoCounter).padStart(2, '0');
+      decoCounter++;
+    });
+  });
 
   const showSlide = (index) => {
     if (index < 0) {
