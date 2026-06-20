@@ -2,6 +2,9 @@
 # 隱藏包含 Token 的自動上傳腳本
 upload.bat
 run_server.bat
+server.py
+preview.html
+server_run.py
 # --- 系統垃圾檔案 ---
 .DS_Store
 Thumbs.db
